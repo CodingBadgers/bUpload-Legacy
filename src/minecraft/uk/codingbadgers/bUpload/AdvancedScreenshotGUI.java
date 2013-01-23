@@ -15,7 +15,7 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 	private static final int SAVE_TO_IMGUR = 2;
 	private static final int SAVE_TO_BOTH = 3;
 	private static final int REMEMBER_CHOICE = 4;
-	private static final int OPTIONS = 5;
+	private static final int HISTORY = 5;
 	private static final int EXIT = 6;
 	
 	private GuiCheckBox m_rememberCheckBox = null;
@@ -53,11 +53,10 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 		controlList.add(m_rememberCheckBox);
 		
 		ypos += (24 * 2);
-		//buttonwidth = 75;
-		//controlList.add(new GuiButton(OPTIONS, width / 2 - 80, ypos, buttonwidth, 20, "Options"));
-		//controlList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, "Cancel"));
-		
-		controlList.add(new GuiButton(EXIT, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Cancel"));
+		buttonwidth = 75;
+		controlList.add(new GuiButton(HISTORY, width / 2 - 80, ypos, buttonwidth, 20, "History"));
+		controlList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, "Cancel"));
+
 	}
 
 	public void actionPerformed(GuiButton button){
@@ -72,7 +71,6 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 		{
 			case SAVE_TO_HD:
 			{
-				System.out.println("Save to HD!");
 				CHOICE_TO_REMEMBER = SAVE_TO_HD;
 				m_mod.saveScreenshotToHD();
 				mc.displayGuiScreen(null);
@@ -80,7 +78,6 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 			break;
 			case SAVE_TO_IMGUR:
 			{
-				System.out.println("Save to imgur!");
 				CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
 				m_mod.uploadScreenShot();
 				mc.displayGuiScreen(null);
@@ -88,7 +85,6 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 			break;
 			case SAVE_TO_BOTH:
 			{
-				System.out.println("Save to both!");
 				CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
 				m_mod.uploadScreenShot();
 				m_mod.saveScreenshotToHD();
@@ -100,14 +96,13 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 				SHOULD_REMEMBER_CHOICE = m_rememberCheckBox.getChecked();
 			}
 			break;
-			case OPTIONS:
+			case HISTORY:
 			{
-								
+				mc.displayGuiScreen(new UploadHistoryGUI(m_mod));
 			}
 			break;
 			case EXIT:
 			{
-				System.out.println("Exit");
 				mc.displayGuiScreen(null);
 			}
 			break;
