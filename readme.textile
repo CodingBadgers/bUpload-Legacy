@@ -2,15 +2,15 @@ h1. bUpload
 
 h2. Introduction
 
-This mod adds better functionallity when taking screen shot from within the minecraft client.
-It has the abillity to upload screen shot straight tom www.imgur.com for easy sharing with others.
-As well as this, it can be used to save screen shots to a users hard drive, however the screen shot are saved within an organised folder structure.
+This mod adds better functionality when taking screen shot from within the minecraft client.
+It has the ability to upload screen shot straight tom www.imgur.com for easy sharing with others.
+As well as this, it can be used to save screen shots to a users hard drive, however the screen shot are saved within an organized folder structure.
 
 If the player is playing in single player and saves a screen shot to there hard drive, it will be saved in the following path;
 .minecraft/screenshots/<username>/single player/<world name>/<date and time>.png
 
 If the player is playing on a multiplayer server, the screen shot will be saved to the following path;
-.minecraft/screenshots/<username>/mulitplayer/<server name>/<dat and time>.png
+.minecraft/screenshots/<username>/mulitplayer/<server name>/<date and time>.png
 
 h2. License
 
@@ -24,7 +24,7 @@ As well as this, pressing the '=' key (by default) will print out the players re
 
 h2. Checking out the code
 
-This is an svn repository, so using software such as tortouise SVN is required to checkout the code.
+This is an svn repository, so you must use software such as tortouise SVN is required to checkout the code.
 
 Firstly create a folder some where and extract the latest version of MCP (Minecraft Coders Pack) into the folder [http://mcp.ocean-labs.de/index.php/MCP_Releases].
 You will then require the latest Forge source code to build against [http://www.minecraftforge.net/forum/index.php?board=3.0], extract Forge into the same folder you extracted MCP into.
