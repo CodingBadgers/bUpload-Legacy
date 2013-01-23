@@ -1,3 +1,10 @@
-h1. Assembla.readme
+h1. bUpload
 
-In assembla you can use "textile(Textile Basics)":http://bit.ly/textile-basics, "html(Html Basics)":http://bit.ly/html-basics or "markdown(Markdown Basics)":http://bit.ly/markdown-basics to add some sugar to your readme files. Just add the extention to your readme file, so we can recognize the markup you want to use!
+h2. Introduction
+
+This mod will upload screen shots from in game straight to www.imgur.com. Once it has uploaded the image it will paste a link to the image into your chat. bUpload is multi-threaded, so while the image is uploading you can continue playing Minecraft as normal. bUpload does not save your file locally, it just uploads the image straight to imgur for safe storage, making it easy to share images with friends and post them on forums.
+
+h2. License
+
+This software is licensed under the GNU General Public License.
+http://www.gnu.org/licenses/gpl.txt
