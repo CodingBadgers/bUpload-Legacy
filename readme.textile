@@ -2,9 +2,32 @@ h1. bUpload
 
 h2. Introduction
 
-This mod will upload screen shots from in game straight to www.imgur.com. Once it has uploaded the image it will paste a link to the image into your chat. bUpload is multi-threaded, so while the image is uploading you can continue playing Minecraft as normal. bUpload does not save your file locally, it just uploads the image straight to imgur for safe storage, making it easy to share images with friends and post them on forums.
+This mod adds better functionallity when taking screen shot from within the minecraft client.
+It has the abillity to upload screen shot straight tom www.imgur.com for easy sharing with others.
+As well as this, it can be used to save screen shots to a users hard drive, however the screen shot are saved within an organised folder structure.
+
+If the player is playing in single player and saves a screen shot to there hard drive, it will be saved in the following path;
+.minecraft/screenshots/<username>/single player/<world name>/<date and time>.png
+
+If the player is playing on a multiplayer server, the screen shot will be saved to the following path;
+.minecraft/screenshots/<username>/mulitplayer/<server name>/<dat and time>.png
 
 h2. License
 
 This software is licensed under the GNU General Public License.
 http://www.gnu.org/licenses/gpl.txt
+
+h2. Usage
+
+By default, pressing the 'F12' key will bring up the "bUpload - Advanced Screenshot Manager". From here the user can control what happens to there screen shot.
+As well as this, pressing the '=' key (by default) will print out the players recent upload history.
+
+h2. Checking out the code
+
+This is an svn repository, so using software such as tortouise SVN is required to checkout the code.
+
+Firstly create a folder some where and extract the latest version of MCP (Minecraft Coders Pack) into the folder [http://mcp.ocean-labs.de/index.php/MCP_Releases].
+You will then require the latest Forge source code to build against [http://www.minecraftforge.net/forum/index.php?board=3.0], extract Forge into the same folder you extracted MCP into.
+Copy an unmodified version of the '/.minecraft/bin/' and '/.minecraft/resources/' into the '/jars/' folder
+Navigate into the '/forge/' directory and run the install script (wait for the install to finish, this may take a few moments).
+Checkout the svn repository [https://subversion.assembla.com/svn/bupload/] into the folder you put MCP and Forge in.
