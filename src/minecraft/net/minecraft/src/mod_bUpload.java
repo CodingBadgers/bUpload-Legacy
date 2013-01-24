@@ -16,11 +16,13 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 import uk.codingbadgers.bUpload.ImageUploadThread;
 import uk.codingbadgers.bUpload.UploadedImage;
 import uk.codingbadgers.bUpload.bUploadKeyHandler;
+import uk.codingbadgers.bUpload.bUploadScreenShot;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -45,7 +47,7 @@ public class mod_bUpload {
     private static ArrayList<UploadedImage>		m_uploadHistory = new ArrayList<UploadedImage>();
 
     /** The last screenshot taken */
-    private BufferedImage						m_lastScreenshot = null;
+    private bUploadScreenShot					m_lastScreenshot = new bUploadScreenShot();
     
     /** */
     private static final DateFormat 			DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
@@ -76,13 +78,16 @@ public class mod_bUpload {
             GL11.glReadPixels(0, 0, minecraft.displayWidth, minecraft.displayHeight, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, PIXEL_BUFFER);
             PIXEL_BUFFER.get(PIXEL_ARRAY);
             copyScreenBuffer(PIXEL_ARRAY, minecraft.displayWidth, minecraft.displayHeight);
-            m_lastScreenshot = new BufferedImage(minecraft.displayWidth, minecraft.displayHeight, 1);
-            m_lastScreenshot.setRGB(0, 0, minecraft.displayWidth, minecraft.displayHeight, PIXEL_ARRAY, 0, minecraft.displayWidth);
+            m_lastScreenshot.image = new BufferedImage(minecraft.displayWidth, minecraft.displayHeight, 1);
+            m_lastScreenshot.image.setRGB(0, 0, minecraft.displayWidth, minecraft.displayHeight, PIXEL_ARRAY, 0, minecraft.displayWidth);
+            
+            m_lastScreenshot.imageID = minecraft.renderEngine.allocateAndSetupTexture(m_lastScreenshot.image);
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
-            m_lastScreenshot = null;
+            m_lastScreenshot.image = null;
+            m_lastScreenshot.imageID = 0;
         }
 		
 	}
@@ -91,7 +96,7 @@ public class mod_bUpload {
 		
 		Minecraft minecraft = ModLoader.getMinecraftInstance();
 		
-        if (m_lastScreenshot != null)
+        if (m_lastScreenshot.image != null && m_lastScreenshot.imageID != 0)
         {
             minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FUploading image to Imgur...");
             ImageUploadThread uploadThread = new ImageUploadThread(m_lastScreenshot, minecraft);
@@ -129,7 +134,7 @@ public class mod_bUpload {
 					outputFile.mkdirs();
 				
 			    try {
-					ImageIO.write(m_lastScreenshot, "PNG", outputFile);
+					ImageIO.write(m_lastScreenshot.image, "PNG", outputFile);
 				} catch (IOException e) {
 					minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FFailed to save image to disk!");
 					e.printStackTrace();
@@ -172,7 +177,7 @@ public class mod_bUpload {
     }
     
     /**
-     * 
+     * Add an image to our upload history
      */
     public static synchronized void addUploadedImage(
     		UploadedImage newImage
@@ -183,4 +188,32 @@ public class mod_bUpload {
     	}
     }
 	
+    /**
+     * 
+     * @param index
+     * @return
+     */
+    public UploadedImage getUploadedImage(int index) {
+    	
+    	synchronized(m_uploadHistory) {
+    		if (index >= m_uploadHistory.size())
+    			return null;
+    		
+    		return m_uploadHistory.get(index);
+    	}
+    	
+    }
+    
+    /**
+     * 
+     * @return
+     */
+    public int uploadHistorySize() {
+    	
+    	synchronized(m_uploadHistory) {
+    		return m_uploadHistory.size();
+    	}
+    	
+    }
+    
 }

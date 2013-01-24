@@ -21,10 +21,10 @@ import org.apache.http.util.EntityUtils;
 
 public class ImageUploadThread implements Runnable
 {
-    private BufferedImage 			m_image = null;
+    private bUploadScreenShot 		m_image = null;
     private Minecraft 				m_minecraft = null;
 
-    public ImageUploadThread(BufferedImage image, Minecraft minecraft)
+    public ImageUploadThread(bUploadScreenShot image, Minecraft minecraft)
     {
         m_image = image;
         m_minecraft = minecraft;
@@ -42,12 +42,12 @@ public class ImageUploadThread implements Runnable
      * @param image The image to upload
      * @return a formatted url to the uploaded image, or an error message
      */
-    private String Upload(BufferedImage image)
+    private String Upload(bUploadScreenShot image)
     {
         try
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            ImageIO.write(image, "png", baos);
+            ImageIO.write(image.image, "png", baos);
             String data = Base64.encodeBase64String(baos.toByteArray()).toString();
             HttpPost hpost = new HttpPost("http://api.imgur.com/2/upload.xml");
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
@@ -67,7 +67,7 @@ public class ImageUploadThread implements Runnable
                 return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.";
             }
 
-            mod_bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl));
+            mod_bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image));
             
             return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "fImage uploaded to " + mod_bUpload.COLOUR + "6" + uploadUrl;
         }

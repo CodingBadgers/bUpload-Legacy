@@ -24,6 +24,9 @@ public class UploadHistoryGUI extends GuiScreen {
 	
 	/** The id of the next button */
 	private static final int		BUTTON_NEXT = 2;
+	
+	/** The current image index into the upload history */
+	private int 					m_currentImage = 0;
 		
 	/**
 	 * Default constructor
@@ -65,6 +68,27 @@ public class UploadHistoryGUI extends GuiScreen {
         
         drawTexturedModalRect((width / 2) - (m_containerWidth / 2), (height / 2) - (m_containerHeight / 2), 0, 0, m_containerWidth, m_containerHeight);
 		
+        UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+        if (imageInfo != null)
+        {
+        	// draw the image information
+        	int yOffset = 132;
+        	drawCenteredString(minecraft.fontRenderer, imageInfo.getName(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFFFFF);
+        	yOffset += 16;
+        	drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFFFFF);
+        
+        	// draw the image preview
+        	GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageInfo.getImageID());
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+            
+            drawTexturedModalRect((width / 2) - (m_containerWidth / 2) + 8, (height / 2) - (m_containerHeight / 2) + 18, 0, 0, 160, 101);
+        
+        }
+        else
+        {
+        	drawCenteredString(minecraft.fontRenderer,  "No Upload History", (width / 2), ((height / 2) - (m_containerHeight / 2)) + 132, 0xFFFFFFFF);
+        }
+        
 		super.drawScreen(i, j, f);
 		
 	}
@@ -74,6 +98,23 @@ public class UploadHistoryGUI extends GuiScreen {
 	 */
 	public void actionPerformed(GuiButton button){
 		
+		switch (button.id)
+		{
+			case BUTTON_PREVIOUS:
+			{
+				System.out.println("Clicked Previous");
+				m_currentImage--;
+				if (m_currentImage < 0) m_currentImage = m_mod.uploadHistorySize() - 1;
+			}
+			break;
+			case BUTTON_NEXT:
+			{
+				System.out.println("Clicked Next");
+				m_currentImage++;
+				if (m_currentImage >= m_mod.uploadHistorySize()) m_currentImage = 0;
+			}
+			break;
+		}
 	}
 
 }
