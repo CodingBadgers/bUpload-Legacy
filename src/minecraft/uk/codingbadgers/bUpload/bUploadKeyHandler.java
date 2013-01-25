@@ -54,7 +54,8 @@ public class bUploadKeyHandler extends KeyHandler {
 		}
 		else if (m_pressed && kb.keyCode == onUploadHistory.keyCode)
 		{
-			m_mod.showUploadHistory();
+			Minecraft minecraft = ModLoader.getMinecraftInstance();
+			minecraft.displayGuiScreen(new UploadHistoryGUI(m_mod));
 		}
 	}
 
