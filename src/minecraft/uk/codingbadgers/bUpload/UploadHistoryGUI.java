@@ -122,14 +122,13 @@ public class UploadHistoryGUI extends GuiScreen {
 		{
 			case BUTTON_PREVIOUS:
 			{
-				System.out.println("Clicked Previous");
 				m_currentImage--;
 				if (m_currentImage < 0) m_currentImage = m_mod.uploadHistorySize() - 1;
+				if (m_currentImage < 0) m_currentImage = 0;
 			}
 			break;
 			case BUTTON_NEXT:
 			{
-				System.out.println("Clicked Next");
 				m_currentImage++;
 				if (m_currentImage >= m_mod.uploadHistorySize()) m_currentImage = 0;
 			}
@@ -157,6 +156,9 @@ public class UploadHistoryGUI extends GuiScreen {
         
     }
     
+    /**
+     * Called when the user clicks a button on the 'should i open that link' gui
+     */
     public void confirmClicked(boolean openUrl, int par2) {
     	
     	if (openUrl)

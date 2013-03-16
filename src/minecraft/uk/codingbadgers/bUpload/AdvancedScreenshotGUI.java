@@ -17,6 +17,7 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 	private static final int REMEMBER_CHOICE = 4;
 	private static final int HISTORY = 5;
 	private static final int EXIT = 6;
+	private static final int SETTINGS = 7;
 	
 	private GuiCheckBox m_rememberCheckBox = null;
 	
@@ -56,7 +57,10 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 		buttonwidth = 75;
 		controlList.add(new GuiButton(HISTORY, width / 2 - 80, ypos, buttonwidth, 20, "History"));
 		controlList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, "Cancel"));
-
+		
+		ypos += 24;
+		buttonwidth = 160;
+		controlList.add(new GuiButton(SETTINGS, width / 2 - (buttonwidth / 2), ypos, 160, 20, "Settings"));
 	}
 
 	public void actionPerformed(GuiButton button){
@@ -104,6 +108,10 @@ public class AdvancedScreenshotGUI extends GuiScreen {
 			case EXIT:
 			{
 				mc.displayGuiScreen(null);
+			}
+			case SETTINGS:
+			{
+				mc.displayGuiScreen(new SettingsGUI(m_mod, this));
 			}
 			break;
 		}
