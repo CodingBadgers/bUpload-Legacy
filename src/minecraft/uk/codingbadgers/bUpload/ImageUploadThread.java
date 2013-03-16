@@ -58,7 +58,6 @@ public class ImageUploadThread implements Runnable
             DefaultHttpClient client = new DefaultHttpClient();
             HttpResponse resp = client.execute(hpost);
             String result = EntityUtils.toString(resp.getEntity());
-            
             final String uploadUrl = extractXML(result, "original");
             final String imageName = extractXML(result, "datetime");
 
@@ -68,7 +67,6 @@ public class ImageUploadThread implements Runnable
             }
 
             mod_bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image));
-            
             return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "fImage uploaded to " + mod_bUpload.COLOUR + "6" + uploadUrl;
         }
         catch (Exception ex)
@@ -77,18 +75,19 @@ public class ImageUploadThread implements Runnable
             return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.";
         }
     }
-    
+
     private String extractXML(String XML, String element)
     {
-    	final String startElement = "<" + element + ">";
-    	final String endElement = "</" + element + ">";
-    	
-    	final int start = XML.indexOf(startElement) + startElement.length();
-    	final int end = XML.indexOf(endElement);
-    	
-    	if (start == -1 || end == -1)
-    		return null;
-    	
-    	return XML.substring(start, end);
+        final String startElement = "<" + element + ">";
+        final String endElement = "</" + element + ">";
+        final int start = XML.indexOf(startElement) + startElement.length();
+        final int end = XML.indexOf(endElement);
+
+        if (start == -1 || end == -1)
+        {
+            return null;
+        }
+
+        return XML.substring(start, end);
     }
 }

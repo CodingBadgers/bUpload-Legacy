@@ -32,12 +32,12 @@ import cpw.mods.fml.common.Mod.Init;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid="TheCodingBadgers-bUpload", name="bUpload", version="1.4.7")
-@NetworkMod(clientSideRequired=true, serverSideRequired=false)
+@Mod(modid = "TheCodingBadgers-bUpload", name = "bUpload", version = "1.4.7")
+@NetworkMod(clientSideRequired = true, serverSideRequired = false)
 
-public class mod_bUpload {
-
-	/** A pixel buffer to store the screen shot in */
+public class mod_bUpload
+{
+    /** A pixel buffer to store the screen shot in */
     private static IntBuffer 					PIXEL_BUFFER = null;
 
     /** A pixel array to store the pixel buffer in so we can convert it to an image an upload */
@@ -45,25 +45,25 @@ public class mod_bUpload {
 
     /** Prefix for colour codes */
     public final static char					COLOUR = 167;
-    
+
     /** Session history of uploads */
     private static ArrayList<UploadedImage>		m_uploadHistory = new ArrayList<UploadedImage>();
 
     /** The last screenshot taken */
     private bUploadScreenShot					m_lastScreenshot = new bUploadScreenShot();
-    
+
     /** */
     private static final DateFormat 			DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
-    
-	@Init
-	public void load(FMLInitializationEvent event) 
-	{
-		KeyBindingRegistry.registerKeyBinding(new bUploadKeyHandler(this));
-	}
-	
-	public void createScreenshot() {
-		
-		Minecraft minecraft = ModLoader.getMinecraftInstance();
+
+    @Init
+    public void load(FMLInitializationEvent event)
+    {
+        KeyBindingRegistry.registerKeyBinding(new bUploadKeyHandler(this));
+    }
+
+    public void createScreenshot()
+    {
+        Minecraft minecraft = ModLoader.getMinecraftInstance();
 
         try
         {
@@ -83,7 +83,6 @@ public class mod_bUpload {
             copyScreenBuffer(PIXEL_ARRAY, minecraft.displayWidth, minecraft.displayHeight);
             m_lastScreenshot.image = new BufferedImage(minecraft.displayWidth, minecraft.displayHeight, 1);
             m_lastScreenshot.image.setRGB(0, 0, minecraft.displayWidth, minecraft.displayHeight, PIXEL_ARRAY, 0, minecraft.displayWidth);
-            
             m_lastScreenshot.imageID = minecraft.renderEngine.allocateAndSetupTexture(m_lastScreenshot.image);
         }
         catch (Exception ex)
@@ -92,62 +91,66 @@ public class mod_bUpload {
             m_lastScreenshot.image = null;
             m_lastScreenshot.imageID = 0;
         }
-		
-	}
+    }
 
-	public void uploadScreenShot() {
-		
-		Minecraft minecraft = ModLoader.getMinecraftInstance();
-		
+    public void uploadScreenShot()
+    {
+        Minecraft minecraft = ModLoader.getMinecraftInstance();
+
         if (m_lastScreenshot.image != null && m_lastScreenshot.imageID != 0)
         {
             minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FUploading image to Imgur...");
             ImageUploadThread uploadThread = new ImageUploadThread(m_lastScreenshot, minecraft);
             new Thread(uploadThread).start();
         }
-        
-	}
-	
-	public void saveScreenshotToHD() {
-		
-		Minecraft minecraft = ModLoader.getMinecraftInstance();
-		
-		if (m_lastScreenshot != null)
-		{
-			String imagePath = minecraft.getMinecraftDir().getAbsolutePath();
-			imagePath += "/screenshots/" + minecraft.thePlayer.username;
-			
-			if (minecraft.isSingleplayer()) {
-				imagePath += "/single player/";
-				imagePath += minecraft.getIntegratedServer().getFolderName() + "/";
-			} else { 
-				imagePath += "/multiplayer/";
-				imagePath += minecraft.getServerData().serverName + "/";
-			}
-			
-			imagePath += DATE_FORMAT.format(new Date()).toString();			
-			imagePath += ".png";
-			
-			System.out.println("Screenshot Save Path: " + imagePath);
-			
-			File outputFile = new File(imagePath);
-			if (outputFile != null) {
-				
-				if (!outputFile.exists())
-					outputFile.mkdirs();
-				
-			    try {
-					ImageIO.write(m_lastScreenshot.image, "PNG", outputFile);
-				} catch (IOException e) {
-					minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FFailed to save image to disk!");
-					e.printStackTrace();
-				}
-			}
-		}
-		
-	}
-	
-	/**
+    }
+
+    public void saveScreenshotToHD()
+    {
+        Minecraft minecraft = ModLoader.getMinecraftInstance();
+
+        if (m_lastScreenshot != null)
+        {
+            String imagePath = minecraft.getMinecraftDir().getAbsolutePath();
+            imagePath += "/screenshots/" + minecraft.thePlayer.username;
+
+            if (minecraft.isSingleplayer())
+            {
+                imagePath += "/single player/";
+                imagePath += minecraft.getIntegratedServer().getFolderName() + "/";
+            }
+            else
+            {
+                imagePath += "/multiplayer/";
+                imagePath += minecraft.getServerData().serverName + "/";
+            }
+
+            imagePath += DATE_FORMAT.format(new Date()).toString();
+            imagePath += ".png";
+            System.out.println("Screenshot Save Path: " + imagePath);
+            File outputFile = new File(imagePath);
+
+            if (outputFile != null)
+            {
+                if (!outputFile.exists())
+                {
+                    outputFile.mkdirs();
+                }
+
+                try
+                {
+                    ImageIO.write(m_lastScreenshot.image, "PNG", outputFile);
+                }
+                catch (IOException e)
+                {
+                    minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FFailed to save image to disk!");
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
      * Copy the screen buffer
      * @param buffer to copy too
      * @param width of the buffer
@@ -165,58 +168,62 @@ public class mod_bUpload {
             System.arraycopy(var3, 0, buffer, (height - 1 - index) * width, width);
         }
     }
-    
+
     /**
      * Shows the upload history from the current session
      */
     public void showUploadHistory()
     {
-    	Minecraft minecraft = ModLoader.getMinecraftInstance();
-    	minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "F-- Upload History -- ");
-    	for (UploadedImage image : m_uploadHistory)
-    	{
-    		minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[" + image.getName() + "]" + COLOUR + "b " + image.getUrl());
-    	}
+        Minecraft minecraft = ModLoader.getMinecraftInstance();
+        minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "F-- Upload History -- ");
+
+        for (UploadedImage image : m_uploadHistory)
+        {
+            minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[" + image.getName() + "]" + COLOUR + "b " + image.getUrl());
+        }
     }
-    
+
     /**
      * Add an image to our upload history
      */
+
     public static synchronized void addUploadedImage(
-    		UploadedImage newImage
-    	)
+            UploadedImage newImage
+    )
     {
-    	synchronized(m_uploadHistory) {
-    		m_uploadHistory.add(newImage);
-    	}
+        synchronized (m_uploadHistory)
+        {
+            m_uploadHistory.add(newImage);
+        }
     }
-	
+
     /**
-     * 
+     *
      * @param index
      * @return
      */
-    public UploadedImage getUploadedImage(int index) {
-    	
-    	synchronized(m_uploadHistory) {
-    		if (index >= m_uploadHistory.size())
-    			return null;
-    		
-    		return m_uploadHistory.get(index);
-    	}
-    	
+    public UploadedImage getUploadedImage(int index)
+    {
+        synchronized (m_uploadHistory)
+        {
+            if (index >= m_uploadHistory.size())
+            {
+                return null;
+            }
+
+            return m_uploadHistory.get(index);
+        }
     }
-    
+
     /**
-     * 
+     *
      * @return
      */
-    public int uploadHistorySize() {
-    	
-    	synchronized(m_uploadHistory) {
-    		return m_uploadHistory.size();
-    	}
-    	
+    public int uploadHistorySize()
+    {
+        synchronized (m_uploadHistory)
+        {
+            return m_uploadHistory.size();
+        }
     }
-    
 }
