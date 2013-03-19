@@ -1,5 +1,8 @@
 package uk.codingbadgers.bUpload;
 
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 
 import org.lwjgl.opengl.GL11;
@@ -64,19 +67,26 @@ public class UploadHistoryGUI extends GuiScreen
         Minecraft minecraft = ModLoader.getMinecraftInstance();
         drawDefaultBackground();
         // load our container image
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.getTexture("/gui/bupload-history.png"));
+        minecraft.renderEngine.func_98187_b("/gui/bupload-history.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect((width / 2) - (m_containerWidth / 2), (height / 2) - (m_containerHeight / 2), 0, 0, m_containerWidth, m_containerHeight);
         UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
 
         if (imageInfo != null)
         {
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, 0);
+        	minecraft.renderEngine.func_98187_b("/font/default.png");
+        	
             // draw the image information
             int yOffset = 132;
             drawCenteredString(minecraft.fontRenderer, imageInfo.getName(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFFFFF);
             yOffset += 16;
-            drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
+            
+            if (!imageInfo.isLocal()) {
+            	drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
+            } else {
+            	drawCenteredString(minecraft.fontRenderer, "Open Saved Image", (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
+            }
+            	
             // draw the image preview
             GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageInfo.getImageID());
             GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
@@ -173,7 +183,23 @@ public class UploadHistoryGUI extends GuiScreen
 
         if (imageInfo != null)
         {
-            mc.displayGuiScreen(new GuiConfirmOpenLink(this, imageInfo.getUrl(), 0));
+        	if (!imageInfo.isLocal()) {
+        		mc.displayGuiScreen(new GuiConfirmOpenLink(this, imageInfo.getUrl(), 0));
+        	} else {
+        		Desktop dt = Desktop.getDesktop();
+        		try {
+					dt.open(new File(imageInfo.getUrl()));
+				} catch (IOException e) {
+					mc.currentScreen = null;
+					mc.ingameGUI.getChatGUI().printChatMessage(((char)167) + "6[bUpload] " + ((char)167) + "FFailed open image from disk!");
+					mc.ingameGUI.getChatGUI().printChatMessage(((char)167) + "6[bUpload] " + ((char)167) + "FOpening file lcoation instead...");
+					try {
+						dt.open(new File(imageInfo.getUrl().replace(imageInfo.getName(), "")));
+					} catch (IOException e1) {
+						mc.ingameGUI.getChatGUI().printChatMessage(((char)167) + "6[bUpload] " + ((char)167) + "FFailed to open file location!");
+					}
+				}
+        	}
         }
     }
 
@@ -190,9 +216,8 @@ public class UploadHistoryGUI extends GuiScreen
             {
                 try
                 {
-                    Class var2 = Class.forName("java.awt.Desktop");
-                    Object var3 = var2.getMethod("getDesktop", new Class[0]).invoke((Object)null, new Object[0]);
-                    var2.getMethod("browse", new Class[] {URI.class}).invoke(var3, new Object[] {URI.create(imageInfo.getUrl())});
+                	Desktop dt = Desktop.getDesktop();
+                	dt.browse(URI.create(imageInfo.getUrl()));
                 }
                 catch (Throwable var4)
                 {

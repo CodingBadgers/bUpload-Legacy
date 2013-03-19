@@ -19,6 +19,9 @@ public class UploadedImage
 
     /** */
     private int m_imageID;
+    
+    /** */
+    private boolean m_localFile;
 
     /**
      *
@@ -29,12 +32,14 @@ public class UploadedImage
     public UploadedImage(
             String name,
             String url,
-            bUploadScreenShot image
+            bUploadScreenShot image,
+            boolean localFile
     )
     {
         m_name = name;
         m_url = url;
         m_imageID = image.imageID;
+        m_localFile = localFile;
     }
 
     /**
@@ -63,4 +68,13 @@ public class UploadedImage
     {
         return m_imageID;
     }
+    
+    /**
+    *
+    * @return
+    */
+   public boolean isLocal()
+   {
+       return m_localFile;
+   }
 }

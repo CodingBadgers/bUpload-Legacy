@@ -50,15 +50,14 @@ public class bUploadKeyHandler extends KeyHandler
     public void keyUp(EnumSet<TickType> types, KeyBinding kb, boolean tickEnd)
     {
         m_pressed = !m_pressed;
-
+        Minecraft minecraft = ModLoader.getMinecraftInstance();
+        
         if (m_pressed && kb.keyCode == onScreenShot.keyCode)
         {
-            Minecraft minecraft = ModLoader.getMinecraftInstance();
             minecraft.displayGuiScreen(new AdvancedScreenshotGUI(m_mod));
         }
-        else if (m_pressed && kb.keyCode == onUploadHistory.keyCode)
+        else if (m_pressed && kb.keyCode == onUploadHistory.keyCode && minecraft.currentScreen == null)
         {
-            Minecraft minecraft = ModLoader.getMinecraftInstance();
             minecraft.displayGuiScreen(new UploadHistoryGUI(m_mod));
         }
     }

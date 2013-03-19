@@ -112,22 +112,23 @@ public class mod_bUpload
         if (m_lastScreenshot != null)
         {
             String imagePath = minecraft.getMinecraftDir().getAbsolutePath();
-            imagePath += "/screenshots/" + minecraft.thePlayer.username;
+            imagePath = imagePath.substring(0, imagePath.length() - 1);
+            
+            imagePath += "screenshots\\" + minecraft.thePlayer.username;
 
             if (minecraft.isSingleplayer())
             {
-                imagePath += "/single player/";
-                imagePath += minecraft.getIntegratedServer().getFolderName() + "/";
+                imagePath += "\\single player\\";
+                imagePath += minecraft.getIntegratedServer().getFolderName() + "\\";
             }
             else
             {
-                imagePath += "/multiplayer/";
-                imagePath += minecraft.getServerData().serverName + "/";
+                imagePath += "\\multiplayer\\";
+                imagePath += minecraft.getServerData().serverName + "\\";
             }
 
             imagePath += DATE_FORMAT.format(new Date()).toString();
             imagePath += ".png";
-            System.out.println("Screenshot Save Path: " + imagePath);
             File outputFile = new File(imagePath);
 
             if (outputFile != null)
@@ -145,7 +146,11 @@ public class mod_bUpload
                 {
                     minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FFailed to save image to disk!");
                     e.printStackTrace();
+                    return;
                 }
+                
+                minecraft.ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload] " + COLOUR + "FImage saved to disk!");
+                mod_bUpload.addUploadedImage(new UploadedImage(imagePath.substring(imagePath.lastIndexOf("\\") + 1), imagePath, m_lastScreenshot, true));
             }
         }
     }

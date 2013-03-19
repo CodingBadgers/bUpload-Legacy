@@ -58,7 +58,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
         buttonList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, "Cancel"));
         ypos += 24;
         buttonwidth = 160;
-        buttonList.add(new GuiButton(SETTINGS, width / 2 - (buttonwidth / 2), ypos, 160, 20, "Settings"));
+        //buttonList.add(new GuiButton(SETTINGS, width / 2 - (buttonwidth / 2), ypos, 160, 20, "Settings"));
     }
 
     public void actionPerformed(GuiButton button)
