@@ -8,6 +8,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.src.ModLoader;
 import net.minecraft.src.mod_bUpload;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Configuration;
 
 public class AdvancedScreenshotGUI extends GuiScreen
 {
@@ -30,6 +31,15 @@ public class AdvancedScreenshotGUI extends GuiScreen
     {
         m_mod = mod;
         m_mod.createScreenshot();
+        
+        mod.CONFIG.load();
+       
+        SHOULD_REMEMBER_CHOICE = mod.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", false).getBoolean(false);
+        if (SHOULD_REMEMBER_CHOICE) {
+        	CHOICE_TO_REMEMBER = mod.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", 1).getInt(1);
+        }
+        
+        mod.CONFIG.save(); 
     }
 
     public void initGui()
@@ -75,6 +85,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
             case SAVE_TO_HD:
             {
                 CHOICE_TO_REMEMBER = SAVE_TO_HD;
+                updatedSettings();
                 m_mod.saveScreenshotToHD();
                 mc.displayGuiScreen(null);
             }
@@ -83,6 +94,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
             case SAVE_TO_IMGUR:
             {
                 CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
+                updatedSettings();
                 m_mod.uploadScreenShot();
                 mc.displayGuiScreen(null);
             }
@@ -91,6 +103,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
             case SAVE_TO_BOTH:
             {
                 CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
+                updatedSettings();
                 m_mod.uploadScreenShot();
                 m_mod.saveScreenshotToHD();
                 mc.displayGuiScreen(null);
@@ -120,6 +133,16 @@ public class AdvancedScreenshotGUI extends GuiScreen
             }
             break;
         }
+    }
+    
+    private void updatedSettings()
+    {
+    	m_mod.CONFIG.load();
+        
+        m_mod.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", SHOULD_REMEMBER_CHOICE).set(SHOULD_REMEMBER_CHOICE);
+        m_mod.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", CHOICE_TO_REMEMBER).set(CHOICE_TO_REMEMBER);
+        
+        m_mod.CONFIG.save();     	
     }
 
     public void drawScreen(int i, int j, float f)

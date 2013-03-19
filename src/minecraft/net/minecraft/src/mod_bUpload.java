@@ -22,6 +22,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GLAllocation;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
+import net.minecraftforge.common.Configuration;
 import uk.codingbadgers.bUpload.ImageUploadThread;
 import uk.codingbadgers.bUpload.UploadedImage;
 import uk.codingbadgers.bUpload.bUploadKeyHandler;
@@ -29,12 +30,13 @@ import uk.codingbadgers.bUpload.bUploadScreenShot;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
+import cpw.mods.fml.common.Mod.PreInit;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 
-@Mod(modid = "TheCodingBadgers-bUpload", name = "bUpload", version = "1.4.7")
+@Mod(modid = "TheCodingBadgers-bUpload", name = "bUpload", version = "1.5.0")
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
-
 public class mod_bUpload
 {
     /** A pixel buffer to store the screen shot in */
@@ -55,6 +57,16 @@ public class mod_bUpload
     /** */
     private static final DateFormat 			DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
 
+    
+    public static Configuration 				CONFIG = null;
+    
+    @PreInit
+    public void preInit(FMLPreInitializationEvent event) {
+
+    	CONFIG = new Configuration(event.getSuggestedConfigurationFile());
+    	          
+    }
+    
     @Init
     public void load(FMLInitializationEvent event)
     {
