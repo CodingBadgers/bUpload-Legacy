@@ -1,8 +1,5 @@
-package net.minecraft.src;
+package uk.codingbadgers.bUpload;
 
-import java.awt.Graphics2D;
-import java.awt.Image;
-import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,14 +16,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
-import uk.codingbadgers.bUpload.ImageUploadThread;
-import uk.codingbadgers.bUpload.UploadedImage;
-import uk.codingbadgers.bUpload.bUploadKeyHandler;
-import uk.codingbadgers.bUpload.bUploadScreenShot;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.Init;
@@ -123,7 +114,7 @@ public class mod_bUpload
 
         if (m_lastScreenshot != null)
         {
-            String imagePath = minecraft.getMinecraftDir().getAbsolutePath();
+            String imagePath = Minecraft.getMinecraftDir().getAbsolutePath();
             imagePath = imagePath.substring(0, imagePath.length() - 1);
             
             imagePath += "screenshots\\" + minecraft.thePlayer.username;

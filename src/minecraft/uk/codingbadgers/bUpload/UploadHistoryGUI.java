@@ -13,7 +13,6 @@ import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.src.ModLoader;
-import net.minecraft.src.mod_bUpload;
 
 public class UploadHistoryGUI extends GuiScreen
 {
@@ -47,7 +46,8 @@ public class UploadHistoryGUI extends GuiScreen
     /**
      * Initialise the gui, adding buttons to the screen
      */
-    public void initGui()
+    @SuppressWarnings("unchecked")
+	public void initGui()
     {
         buttonList.clear();
         // add a previous button
@@ -184,7 +184,7 @@ public class UploadHistoryGUI extends GuiScreen
         if (imageInfo != null)
         {
         	if (!imageInfo.isLocal()) {
-        		mc.displayGuiScreen(new GuiConfirmOpenLink(this, imageInfo.getUrl(), 0));
+        		mc.displayGuiScreen(new GuiConfirmOpenLink(this, imageInfo.getUrl(), 0, false));
         	} else {
         		Desktop dt = Desktop.getDesktop();
         		try {

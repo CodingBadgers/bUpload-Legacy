@@ -1,6 +1,5 @@
 package uk.codingbadgers.bUpload;
 
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +7,6 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.src.mod_bUpload;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;

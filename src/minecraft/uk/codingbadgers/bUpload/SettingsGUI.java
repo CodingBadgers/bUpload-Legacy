@@ -1,19 +1,11 @@
 package uk.codingbadgers.bUpload;
 
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.src.ModLoader;
-import net.minecraft.src.mod_bUpload;
 
 public class SettingsGUI extends GuiScreen
 {
-    /** Access to the core mod */
-    private mod_bUpload m_mod = null;
-
     /** Imgur account name */
     private GuiTextField m_accountName = null;
 
@@ -28,14 +20,14 @@ public class SettingsGUI extends GuiScreen
      */
     public SettingsGUI(mod_bUpload mod, GuiScreen parent)
     {
-        m_mod = mod;
         m_parent = parent;
     }
 
     /**
      * Initialise the gui, adding buttons to the screen
      */
-    public void initGui()
+    @SuppressWarnings("unchecked")
+	public void initGui()
     {
         buttonList.clear();
         m_accountName = new GuiTextField(mc.fontRenderer, this.width / 2 - 100, 66, 200, 20);

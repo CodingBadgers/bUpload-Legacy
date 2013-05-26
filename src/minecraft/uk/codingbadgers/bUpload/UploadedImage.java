@@ -1,14 +1,5 @@
 package uk.codingbadgers.bUpload;
 
-import java.awt.image.BufferedImage;
-import java.nio.IntBuffer;
-
-import org.lwjgl.opengl.GL11;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GLAllocation;
-import net.minecraft.src.ModLoader;
-
 public class UploadedImage
 {
     /** */
