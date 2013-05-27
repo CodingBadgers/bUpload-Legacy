@@ -7,10 +7,10 @@ It has the ability to upload screen shot straight tom www.imgur.com for easy sha
 As well as this, it can be used to save screen shots to a users hard drive, however the screen shot are saved within an organized folder structure.
 
 If the player is playing in single player and saves a screen shot to there hard drive, it will be saved in the following path;
-<minecraft dir>/screenshots/<username>/single player/<world name>/<date and time>.png
+@<minecraft dir>/screenshots/<username>/single player/<world name>/<date and time>.png@
 
 If the player is playing on a multiplayer server, the screen shot will be saved to the following path;
-<minecraft dir>/screenshots/<username>/mulitplayer/<server name>/<date and time>.png
+@<minecraft dir>/screenshots/<username>/mulitplayer/<server name>/<date and time>.png@
 
 h2. License
 
@@ -29,4 +29,4 @@ This is an svn repository, so you must use software such as tortouise SVN is req
 h2. Building
 
 bUpload is built with ant, so make sure that you have ant installed and on your path before you try and build.
-To setup the environment to build run 'ant setup' and then to build a version of bUpload run 'ant main', this will build a version dependent version, and a version independent in the bin folder in the root directory. The version dependent version will not have a minecraft version after the name eg. bUpload-1.0.0.zip is independant bUpload-1.0.0-1.5.2.zip is dependant.
+To setup the environment to build run @ant setup@ and then to build a version of bUpload run @ant main@, this will build a version dependent version, and a version independent in the bin folder in the root directory. The version dependent version will not have a minecraft version after the name eg. bUpload-1.0.0.zip is independant bUpload-1.0.0-1.5.2.zip is dependant.

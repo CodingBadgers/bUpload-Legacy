@@ -29,7 +29,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.src.ModLoader;
 
 public class UploadHistoryGUI extends GuiScreen
 {
@@ -81,7 +80,7 @@ public class UploadHistoryGUI extends GuiScreen
      */
     public void drawScreen(int i, int j, float f)
     {
-        Minecraft minecraft = ModLoader.getMinecraftInstance();
+        Minecraft minecraft = Minecraft.getMinecraft();
         drawDefaultBackground();
         // load our container image
         minecraft.renderEngine.bindTexture("/gui/bupload-history.png");

@@ -117,6 +117,7 @@ public class GuiCheckBox extends GuiButton
             localYoffset = 146;
         }
 
+        minecraft.renderEngine.bindTexture("/font/default.png");
         // get a color offset based upon the hover state
         final int hoverColor = enabled == false ? -6250336 : hoverState == 2 ? 16777120 : 14737632;
         // work out an offset to add the check box image and center the check box
@@ -126,7 +127,7 @@ public class GuiCheckBox extends GuiButton
         // draw the check box label
         drawString(minecraft.fontRenderer, displayString, xOffset + checkboxImageSize + BOX_LABEL_SPACER, yPosition + (height - 8) / 2, hoverColor);
         // load our check box image
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, minecraft.renderEngine.getTexture("/gui/tcb-gui.png"));
+        minecraft.renderEngine.bindTexture("/gui/tcb-gui.png");
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         // draw the check box
         drawTexturedModalRect(xOffset, yPosition, 0, localYoffset, checkboxImageSize, checkboxImageSize);

@@ -24,6 +24,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.http.HttpResponse;
@@ -48,8 +49,7 @@ public class ImageUploadThread implements Runnable
     @Override
     public void run()
     {
-        String imageUrl = Upload(m_image);
-        m_minecraft.ingameGUI.getChatGUI().printChatMessage(imageUrl);
+        Upload(m_image);
     }
 
     /**
@@ -57,7 +57,7 @@ public class ImageUploadThread implements Runnable
      * @param image The image to upload
      * @return a formatted url to the uploaded image, or an error message
      */
-    private String Upload(bUploadScreenShot image)
+    private boolean Upload(bUploadScreenShot image)
     {
         try
         {
@@ -78,16 +78,24 @@ public class ImageUploadThread implements Runnable
 
             if (uploadUrl == null || imageName == null)
             {
-                return bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.";
+            	 m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.");
+            	 return false;
             }
 
             bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
-            return bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "fImage uploaded to " + bUpload.COLOUR + "6" + uploadUrl;
+            m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FImage uploaded to " + bUpload.COLOUR + "6" + uploadUrl + "!");
+           
+            if (AdvancedScreenshotGUI.SHOULD_COPY_TO_CLIPBOARD) {
+            	GuiScreen.setClipboardString(uploadUrl);
+            	m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FUrl copied to clipboard!");
+            }
+            return true;
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
-            return bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.";
+            m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.");
+            return false;
         }
     }
 
