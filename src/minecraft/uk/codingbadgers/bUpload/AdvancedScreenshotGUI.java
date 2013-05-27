@@ -22,21 +22,21 @@ public class AdvancedScreenshotGUI extends GuiScreen
     private static boolean SHOULD_REMEMBER_CHOICE = false;
     private static int CHOICE_TO_REMEMBER = 0;
 
-    private mod_bUpload m_mod = null;
+    private bUpload m_mod = null;
 
-    public AdvancedScreenshotGUI(mod_bUpload mod)
+    public AdvancedScreenshotGUI(bUpload mod)
     {
         m_mod = mod;
         m_mod.createScreenshot();
         
-        mod_bUpload.CONFIG.load();
+        bUpload.CONFIG.load();
        
-        SHOULD_REMEMBER_CHOICE = mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", false).getBoolean(false);
+        SHOULD_REMEMBER_CHOICE = bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", false).getBoolean(false);
         if (SHOULD_REMEMBER_CHOICE) {
-        	CHOICE_TO_REMEMBER = mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", 1).getInt(1);
+        	CHOICE_TO_REMEMBER = bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", 1).getInt(1);
         }
         
-        mod_bUpload.CONFIG.save(); 
+        bUpload.CONFIG.save(); 
     }
 
     @SuppressWarnings("unchecked")
@@ -135,12 +135,12 @@ public class AdvancedScreenshotGUI extends GuiScreen
     
     private void updatedSettings()
     {
-    	mod_bUpload.CONFIG.load();
+    	bUpload.CONFIG.load();
         
-        mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", SHOULD_REMEMBER_CHOICE).set(SHOULD_REMEMBER_CHOICE);
-        mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", CHOICE_TO_REMEMBER).set(CHOICE_TO_REMEMBER);
+        bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", SHOULD_REMEMBER_CHOICE).set(SHOULD_REMEMBER_CHOICE);
+        bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", CHOICE_TO_REMEMBER).set(CHOICE_TO_REMEMBER);
         
-        mod_bUpload.CONFIG.save();     	
+        bUpload.CONFIG.save();     	
     }
 
     public void drawScreen(int i, int j, float f)

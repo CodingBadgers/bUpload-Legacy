@@ -1,0 +1,265 @@
+<project name="bUpload" default="main">
+	<property environment="env"/>
+	<!-- Properties -->
+
+	<!-- Low level directories -->
+	<property name="build.dir" value="build"/>
+	<property name="src.dir" value="src"/>
+	<property name="jar.dir" value="bin"/>
+	<property name="lang.dir" value="lang"/>
+	<property name="resources.dir" value="res"/>
+	<property name="download.dir" value="download"/>
+	<property name="lib.dir" value="lib"/>
+
+	<!-- High level directories -->
+	<property name="classes.dir" value="${build.dir}/classes"/>
+	<property name="classes.srg.dir" value="${build.dir}/classes_srg"/>
+	<property name="forge.dir" value="${build.dir}/forge"/>
+	<property name="mcp.dir" value="${forge.dir}/mcp"/>
+	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
+
+	<!-- Versioning -->
+	<property name="mc.version" value="1.5.2"/>
+	<property name="forge.version" value="7.8.0.696"/>
+	<property name="project.version.full" value="1.0.0"/>
+
+	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
+
+	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
+
+	<condition property="out-of-date">
+		<not>
+			<and>
+				<available file="${download.dir}/${forge.name}"/>
+				<available file="${mcpsrc.dir}"/>
+			</and>
+		</not>
+	</condition>
+
+	<mkdir dir="${download.dir}"/>
+
+	<!-- Targets -->
+
+	<!-- Clear build directory -->
+	<target name="clean">
+		<delete dir="${build.dir}"/>
+	</target>
+
+	<!-- Download necessary files -->
+	<target name="download-files" depends="download-forge"/>
+
+	<!-- Download forge (if it doesn't exist) -->
+	<target name="download-forge" unless="forge-exists">
+		<get src="http://files.minecraftforge.net/${forge.name}" dest="${download.dir}" usetimestamp="True"/>
+	</target>
+
+	<!-- Setup mcp and forge -->
+	<target name="setup" depends="download-files" if="out-of-date">
+
+		<delete dir="${forge.dir}" failonerror="false"/>
+
+		<unzip dest="${forge.dir}/.." src="${download.dir}/${forge.name}"/>
+
+		<!-- Fix executable permissions -->
+		<chmod dir="${forge.dir}" perm="ugo+rx" includes="**.sh"/>
+
+		<!-- Install forge -->
+		<exec dir="${forge.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c install.cmd"/>
+		</exec>
+
+		<exec dir="${forge.dir}" executable="sh" osfamily="unix">
+			<arg value="install.sh"/>
+		</exec>
+		
+		<copy todir="${mcp.dir}/lib">
+			<fileset dir="${lib.dir}" />
+		</copy>
+
+	</target>
+
+	<target name="copy-src">
+		<copy todir="${mcpsrc.dir}">
+			<fileset dir="${src.dir}"/>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+		</copy>
+	</target>
+
+	<target name="compile" depends="setup,copy-src">
+
+		<delete dir="${classes.dir}"/>
+		<mkdir dir="${classes.dir}"/>
+
+		<!-- Recompile -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c recompile.bat"/>
+		</exec>
+		
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="recompile.sh"/>
+		</exec>
+		
+		<!-- Check for failure -->
+		<fail message="MCP failed to build">
+			<condition>
+				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
+			</condition>
+		</fail>
+		
+		<!-- Reobfuscate -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c reobfuscate.bat"/>
+		</exec>
+
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="reobfuscate.sh"/>
+		</exec>
+
+		<!-- Copy classes -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${mcp.dir}/reobf/minecraft"/>
+		</copy>
+
+		<!-- Copy resources -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${resources.dir}">
+				<exclude name="build.xml"/>
+			</fileset>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+		</copy>
+
+		<!-- Copy localizations -->
+    	<copy todir="${classes.dir}" failonerror="false">
+    		<fileset dir="${lang.dir}">
+                <exclude name="README.md"/>
+    		</fileset>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+    	</copy>
+
+	</target>
+	
+	<target name="compile-srg" depends="setup,copy-src">
+
+		<delete dir="${classes.srg.dir}"/>
+		<mkdir dir="${classes.srg.dir}"/>
+
+		<!-- Recompile -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c recompile.bat"/>
+		</exec>
+		
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="recompile.sh"/>
+		</exec>
+		
+		<!-- Check for failure -->
+		<fail message="MCP failed to build">
+			<condition>
+				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
+			</condition>
+		</fail>
+		
+		<!-- Reobfuscate -->
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c reobfuscate_srg.bat"/>
+		</exec>
+
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="reobfuscate_srg.sh"/>
+		</exec>
+
+		<!-- Copy classes -->
+		<copy todir="${classes.srg.dir}">
+			<fileset dir="${mcp.dir}/reobf/minecraft"/>
+		</copy>
+
+		<!-- Copy resources -->
+		<copy todir="${classes.srg.dir}">
+			<fileset dir="${resources.dir}">
+				<exclude name="build.xml"/>
+			</fileset>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+		</copy>
+
+		<!-- Copy localizations -->
+    	<copy todir="${classes.dir}" failonerror="false">
+    		<fileset dir="${lang.dir}">
+                <exclude name="README.md"/>
+    		</fileset>
+			<filterset>
+				<filter token="VERSION" value="${project.version.full}" />
+				<filter token="BUILD_NUMBER" value="${build.number}" />
+			</filterset>
+    	</copy>
+
+	</target>
+
+	<!-- write the version file for this build -->
+	<target name="write-version">
+	
+		<delete file="${classes.dir}/${ant.project.name}" failonerror="false"/>
+		
+		<propertyfile file="${classes.dir}/${ant.project.name}" comment="${ant.project.name} v:${project.version.full}">
+			<entry  key="version" value="${project.version.full}" />
+			<entry  key="minecraft-version" value="${mc.version}" />
+			<entry  key="build-date" type="date" value="now"      />
+		</propertyfile>
+	</target>
+	
+	<!-- write the version file for this build -->
+	<target name="write-version-srg">
+	
+		<delete file="${classes.srg.dir}/${ant.project.name}" failonerror="false"/>
+		
+		<propertyfile file="${classes.srg.dir}/${ant.project.name}" comment="${ant.project.name} v:${project.version.full}">
+			<entry  key="version" value="${project.version.full}"/>
+			<entry  key="build-date" type="date" value="now" />
+		</propertyfile>
+		
+	</target>
+	
+	<!-- Package the compiled files -->
+	<target name="package" depends="compile,write-version">
+		<mkdir dir="${jar.dir}"/>
+		<delete file="${jar.dir}/${ant.project.name}-${project.version.full}-${mc.version}.zip" />		
+		<zip destfile="${jar.dir}/${ant.project.name}-${project.version.full}-${mc.version}.zip" basedir="${classes.dir}"/>
+	</target>
+
+	<!-- Package the compiled files -->
+	<target name="package-srg" depends="compile-srg,write-version-srg">
+		<mkdir dir="${jar.dir}"/>
+		<delete file="${jar.dir}/${ant.project.name}-${project.version.full}.zip" />		
+		<zip destfile="${jar.dir}/${ant.project.name}-${project.version.full}.zip" basedir="${classes.srg.dir}"/>
+	</target>
+
+	<target name="cleanup">
+		<delete dir="${mcpsrc.dir}/minecraft/uk" failonerror="false"/>
+		<delete dir="${mcp.dir}/rebof/minecraft" failonerror="false"/>
+	</target>
+	
+	<!-- Default target to run -->
+	<target name="main" depends="package,package-srg,cleanup"/>
+	
+	<target name="start" depends="compile, write-version">
+		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
+			<arg value="startclient.sh"/>
+		</exec>
+		
+		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
+			<arg line="/c startclient.bat"/>
+		</exec>
+		
+	</target>
+</project>

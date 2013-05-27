@@ -34,6 +34,8 @@ public class GuiCheckBox extends GuiButton
      * Returns 0 if the check box is disabled,
      * 1 if the mouse is NOT hovering over this check box
      * and 2 if it is hovering over this check box.
+     * 
+     * @param isMouseOver 	if the mouse is over the 
      */
     protected int getHoverState(boolean isMouseOver)
     {

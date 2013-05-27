@@ -61,16 +61,16 @@ public class ImageUploadThread implements Runnable
 
             if (uploadUrl == null || imageName == null)
             {
-                return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.";
+                return bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.";
             }
 
-            mod_bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
-            return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "fImage uploaded to " + mod_bUpload.COLOUR + "6" + uploadUrl;
+            bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
+            return bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "fImage uploaded to " + bUpload.COLOUR + "6" + uploadUrl;
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
-            return mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.";
+            return bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.";
         }
     }
 

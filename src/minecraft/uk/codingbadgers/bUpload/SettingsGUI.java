@@ -18,7 +18,7 @@ public class SettingsGUI extends GuiScreen
      * Default constructor
      * @param mod 		Access to our main mod instance
      */
-    public SettingsGUI(mod_bUpload mod, GuiScreen parent)
+    public SettingsGUI(bUpload mod, GuiScreen parent)
     {
         m_parent = parent;
     }

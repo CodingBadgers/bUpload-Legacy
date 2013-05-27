@@ -17,7 +17,7 @@ import net.minecraft.src.ModLoader;
 public class UploadHistoryGUI extends GuiScreen
 {
     /** Access to the core mod */
-    private mod_bUpload				m_mod = null;
+    private bUpload				m_mod = null;
 
     /** The constant width of the container image */
     private static final int		m_containerWidth = 176;
@@ -38,7 +38,7 @@ public class UploadHistoryGUI extends GuiScreen
      * Default constructor
      * @param mod 		Access to our main mod instance
      */
-    public UploadHistoryGUI(mod_bUpload mod)
+    public UploadHistoryGUI(bUpload mod)
     {
         m_mod = mod;
     }
