@@ -29,14 +29,14 @@ import cpw.mods.fml.common.TickType;
 
 public class bUploadKeyHandler extends KeyHandler
 {
-    private bUpload m_mod = null;
+    private mod_bUpload m_mod = null;
 
     private boolean m_pressed = false;
 
     static KeyBinding onScreenShot = new KeyBinding("Take Advanced Screenshot", Keyboard.KEY_F12);
     static KeyBinding onUploadHistory = new KeyBinding("Screenshot History", Keyboard.KEY_EQUALS);
 
-    public bUploadKeyHandler(bUpload mod)
+    public bUploadKeyHandler(mod_bUpload mod)
     {
         super(
                 new KeyBinding[]

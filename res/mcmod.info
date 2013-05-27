@@ -1,15 +1,15 @@
 [
 {
-"modid": "mod_bUpload",
-"name": "bUpload",
+"modid": "@MOD_ID@",
+"name": "@MOD_NAME@",
 "description": "Upload screen shots straight to imgur.com by pressing F12",
-"version": "1.4.6",
+"version": "@VERSION@",
 "credits": "Created by TheCodingBadgers",
 "logoFile": "logo-bupload.jpg",
-"mcversion": "1.4.6",
+"mcversion": "@MC_VERSION@",
 "url": "http://www.mcbadgercraft.com/",
 "updateUrl": "",
-"authors": [ "n3wton" ],
+"authors": [ "n3wton", "thefish97" ],
 "parent":"",
 "screenshots": [],
 "dependencies": [

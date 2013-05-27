@@ -33,7 +33,7 @@ import net.minecraft.client.renderer.Tessellator;
 public class UploadHistoryGUI extends GuiScreen
 {
     /** Access to the core mod */
-    private bUpload				m_mod = null;
+    private mod_bUpload				m_mod = null;
 
     /** The constant width of the container image */
     private static final int		m_containerWidth = 176;
@@ -54,7 +54,7 @@ public class UploadHistoryGUI extends GuiScreen
      * Default constructor
      * @param mod 		Access to our main mod instance
      */
-    public UploadHistoryGUI(bUpload mod)
+    public UploadHistoryGUI(mod_bUpload mod)
     {
         m_mod = mod;
     }

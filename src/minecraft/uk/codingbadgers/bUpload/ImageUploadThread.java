@@ -78,23 +78,23 @@ public class ImageUploadThread implements Runnable
 
             if (uploadUrl == null || imageName == null)
             {
-            	 m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.");
+            	 m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.");
             	 return false;
             }
 
-            bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
-            m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FImage uploaded to " + bUpload.COLOUR + "6" + uploadUrl + "!");
+            mod_bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
+            m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FImage uploaded to " + mod_bUpload.COLOUR + "6" + uploadUrl + "!");
            
-            if (AdvancedScreenshotGUI.SHOULD_COPY_TO_CLIPBOARD) {
+            if (mod_bUpload.SHOULD_COPY_TO_CLIPBOARD) {
             	GuiScreen.setClipboardString(uploadUrl);
-            	m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FUrl copied to clipboard!");
+            	m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FUrl copied to clipboard!");
             }
             return true;
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
-            m_minecraft.ingameGUI.getChatGUI().printChatMessage(bUpload.COLOUR + "6[bUpload] " + bUpload.COLOUR + "FFailed to upload image.");
+            m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.");
             return false;
         }
     }

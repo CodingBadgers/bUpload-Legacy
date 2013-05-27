@@ -38,33 +38,24 @@ public class AdvancedScreenshotGUI extends GuiScreen
     private GuiCheckBox m_rememberCheckBox = null;
 	private GuiCheckBox m_copyToClipboard = null;
 
-    public static boolean SHOULD_REMEMBER_CHOICE = false;
-    public static boolean SHOULD_COPY_TO_CLIPBOARD = true;
-    public static int CHOICE_TO_REMEMBER = 0;
+    private mod_bUpload m_mod = null;
 
-    private bUpload m_mod = null;
-
-    public AdvancedScreenshotGUI(bUpload mod)
+    public AdvancedScreenshotGUI(mod_bUpload mod)
     {
         m_mod = mod;
         m_mod.createScreenshot();
         
-        bUpload.CONFIG.load();
+        mod_bUpload.CONFIG.load();
        
-        SHOULD_REMEMBER_CHOICE = bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", false).getBoolean(false);
-        if (SHOULD_REMEMBER_CHOICE) {
-        	CHOICE_TO_REMEMBER = bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", 1).getInt(1);
-        }
-        
-        bUpload.CONFIG.save(); 
+        mod_bUpload.CONFIG.save(); 
     }
 
     @SuppressWarnings("unchecked")
 	public void initGui()
     {
-        if (SHOULD_REMEMBER_CHOICE)
+        if (mod_bUpload.SHOULD_REMEMBER_CHOICE)
         {
-            performScreenshotAction(CHOICE_TO_REMEMBER);
+            performScreenshotAction(mod_bUpload.CHOICE_TO_REMEMBER);
             return;
         }
 
@@ -78,7 +69,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
         buttonList.add(new GuiButton(SAVE_TO_BOTH, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Save image to both"));
         ypos += 24;
         m_rememberCheckBox = new GuiCheckBox(REMEMBER_CHOICE, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Remember Choice");
-        m_rememberCheckBox.setChecked(SHOULD_REMEMBER_CHOICE);
+        m_rememberCheckBox.setChecked(mod_bUpload.SHOULD_REMEMBER_CHOICE);
         buttonList.add(m_rememberCheckBox);
         ypos += 24;
         // FIXME currently doesn't render text correctly
@@ -107,7 +98,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
         {
             case SAVE_TO_HD:
             {
-                CHOICE_TO_REMEMBER = SAVE_TO_HD;
+            	mod_bUpload.CHOICE_TO_REMEMBER = SAVE_TO_HD;
                 updatedSettings();
                 m_mod.saveScreenshotToHD();
                 mc.displayGuiScreen(null);
@@ -116,7 +107,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
 
             case SAVE_TO_IMGUR:
             {
-                CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
+            	mod_bUpload.CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
                 updatedSettings();
                 m_mod.uploadScreenShot();
                 mc.displayGuiScreen(null);
@@ -125,7 +116,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
 
             case SAVE_TO_BOTH:
             {
-                CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
+            	mod_bUpload.CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
                 updatedSettings();
                 m_mod.uploadScreenShot();
                 m_mod.saveScreenshotToHD();
@@ -135,7 +126,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
 
             case REMEMBER_CHOICE:
             {
-                SHOULD_REMEMBER_CHOICE = m_rememberCheckBox.getChecked();
+            	mod_bUpload.SHOULD_REMEMBER_CHOICE = m_rememberCheckBox.getChecked();
                 break;
             }
 
@@ -159,7 +150,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
             
             case COPY_TO_CLIPBOARD:
             {
-            	SHOULD_COPY_TO_CLIPBOARD = m_copyToClipboard.getChecked();
+            	mod_bUpload.SHOULD_COPY_TO_CLIPBOARD = m_copyToClipboard.getChecked();
                 break;
             }
             
@@ -172,13 +163,13 @@ public class AdvancedScreenshotGUI extends GuiScreen
     
     private void updatedSettings()
     {
-    	bUpload.CONFIG.load();
+    	mod_bUpload.CONFIG.load();
         
-        bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", SHOULD_REMEMBER_CHOICE).set(SHOULD_REMEMBER_CHOICE);
-        bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", CHOICE_TO_REMEMBER).set(CHOICE_TO_REMEMBER);
-        bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "CopyToClipboard", SHOULD_COPY_TO_CLIPBOARD).set(SHOULD_COPY_TO_CLIPBOARD);
+        mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", mod_bUpload.SHOULD_REMEMBER_CHOICE).set(mod_bUpload.SHOULD_REMEMBER_CHOICE);
+        mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", mod_bUpload.CHOICE_TO_REMEMBER).set(mod_bUpload.CHOICE_TO_REMEMBER);
+        mod_bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "CopyToClipboard", mod_bUpload.SHOULD_COPY_TO_CLIPBOARD).set(mod_bUpload.SHOULD_COPY_TO_CLIPBOARD);
         
-        bUpload.CONFIG.save();     	
+        mod_bUpload.CONFIG.save();     	
     }
 
     public void drawScreen(int i, int j, float f)

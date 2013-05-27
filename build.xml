@@ -1,7 +1,9 @@
 <project name="bUpload" default="main">
 	<property environment="env"/>
 	<!-- Properties -->
-
+	<property name="mod.name" value="bUpload" />
+	<property name="mod.id" value="TheCodingBadgers-bUpload" />
+	
 	<!-- Low level directories -->
 	<property name="build.dir" value="build"/>
 	<property name="src.dir" value="src"/>
@@ -21,10 +23,12 @@
 	<!-- Versioning -->
 	<property name="mc.version" value="1.5.2"/>
 	<property name="forge.version" value="7.8.0.696"/>
-	<property name="project.version.full" value="1.0.1"/>
+	<property name="project.version.full" value="1.0.2"/>
 
+	<!-- Internal -->
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
-
+	<property name="recompile" value="true" />
+	
 	<available property="forge-exists" file="${download.dir}/${forge.name}"/>
 
 	<condition property="out-of-date">
@@ -35,7 +39,15 @@
 			</and>
 		</not>
 	</condition>
-
+	
+	<filterset id="filter">
+		<filter token="MOD_ID" value="${mod.id}" />
+		<filter token="MOD_NAME" value="${mod.name}" />
+		<filter token="VERSION" value="${project.version.full}" />
+		<filter token="MC_VERSION" value="${mc.version}" />
+		<filter token="BUILD_NUMBER" value="${build.number}" />
+	</filterset>
+			
 	<mkdir dir="${download.dir}"/>
 
 	<!-- Targets -->
@@ -81,15 +93,12 @@
 	<target name="copy-src">
 		<copy todir="${mcpsrc.dir}">
 			<fileset dir="${src.dir}"/>
-			<filterset>
-				<filter token="VERSION" value="${project.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-			</filterset>
+			<filterset refid="filter" />
 		</copy>
 	</target>
 
-	<target name="compile" depends="setup,copy-src">
-
+	<target name="recompile" depends="setup,copy-src"  if="recompile">
+	    
 		<delete dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}"/>
 
@@ -109,6 +118,10 @@
 			</condition>
 		</fail>
 		
+		<property name="recompile" value="false" />
+	</target>
+	
+	<target name="compile" depends="recompile">
 		<!-- Reobfuscate -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate.bat"/>
@@ -128,10 +141,7 @@
 			<fileset dir="${resources.dir}">
 				<exclude name="build.xml"/>
 			</fileset>
-			<filterset>
-				<filter token="VERSION" value="${project.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-			</filterset>
+			<filterset refid="filter" />
 		</copy>
 
 		<!-- Copy localizations -->
@@ -139,35 +149,11 @@
     		<fileset dir="${lang.dir}">
                 <exclude name="README.md"/>
     		</fileset>
-			<filterset>
-				<filter token="VERSION" value="${project.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-			</filterset>
+			<filterset refid="filter" />
     	</copy>
-
 	</target>
 	
-	<target name="compile-srg" depends="setup,copy-src">
-
-		<delete dir="${classes.srg.dir}"/>
-		<mkdir dir="${classes.srg.dir}"/>
-
-		<!-- Recompile -->
-		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-			<arg line="/c recompile.bat"/>
-		</exec>
-		
-		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-			<arg value="recompile.sh"/>
-		</exec>
-		
-		<!-- Check for failure -->
-		<fail message="MCP failed to build">
-			<condition>
-				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
-			</condition>
-		</fail>
-		
+	<target name="compile-srg" depends="recompile">
 		<!-- Reobfuscate -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate_srg.bat"/>
@@ -187,10 +173,7 @@
 			<fileset dir="${resources.dir}">
 				<exclude name="build.xml"/>
 			</fileset>
-			<filterset>
-				<filter token="VERSION" value="${project.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-			</filterset>
+			<filterset refid="filter" />
 		</copy>
 
 		<!-- Copy localizations -->
@@ -198,17 +181,12 @@
     		<fileset dir="${lang.dir}">
                 <exclude name="README.md"/>
     		</fileset>
-			<filterset>
-				<filter token="VERSION" value="${project.version.full}" />
-				<filter token="BUILD_NUMBER" value="${build.number}" />
-			</filterset>
+			<filterset refid="filter" />
     	</copy>
-
 	</target>
 
 	<!-- write the version file for this build -->
 	<target name="write-version">
-	
 		<delete file="${classes.dir}/${ant.project.name}" failonerror="false"/>
 		
 		<propertyfile file="${classes.dir}/${ant.project.name}" comment="${ant.project.name} v:${project.version.full}">
@@ -219,15 +197,13 @@
 	</target>
 	
 	<!-- write the version file for this build -->
-	<target name="write-version-srg">
-	
+	<target name="write-version-srg">	
 		<delete file="${classes.srg.dir}/${ant.project.name}" failonerror="false"/>
 		
 		<propertyfile file="${classes.srg.dir}/${ant.project.name}" comment="${ant.project.name} v:${project.version.full}">
 			<entry  key="version" value="${project.version.full}"/>
 			<entry  key="build-date" type="date" value="now" />
 		</propertyfile>
-		
 	</target>
 	
 	<!-- Package the compiled files -->
@@ -247,10 +223,16 @@
 	<target name="cleanup">
 		<delete dir="${mcpsrc.dir}/minecraft/uk" failonerror="false"/>
 		<delete dir="${mcp.dir}/rebof/minecraft" failonerror="false"/>
+		<!-- shouldn't be created but just to be sure -->
+		<delete dir="${jar.dir}/changelog" failonerror="false"/>
 	</target>
 	
 	<!-- Default target to run -->
-	<target name="main" depends="package,package-srg,cleanup"/>
+	<target name="main">
+		<antcall target="package" />
+		<antcall target="package-srg" />
+		<antcall target="cleanup" />    
+	</target>
 	
 	<target name="start" depends="compile, write-version">
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
@@ -261,5 +243,6 @@
 			<arg line="/c startclient.bat"/>
 		</exec>
 		
+		<antcall target="cleanup" />
 	</target>
 </project>
