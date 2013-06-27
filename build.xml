@@ -40,7 +40,6 @@
 	</condition>
 	
 	<property name="recompile" value="true" />
-	<property name="setup" value="${out-of-date}" />
 
 	<filterset id="filter">
 		<filter token="MOD_ID" value="${mod.id}" />
@@ -68,7 +67,7 @@
 	</target>
 
 	<!-- Setup mcp and forge -->
-	<target name="setup" depends="download-files" if="out-of-date,setup">
+	<target name="setup" depends="download-files" if="out-of-date">
 
 		<delete dir="${forge.dir}" failonerror="false"/>
 
