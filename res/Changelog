@@ -1,1 +1,4 @@
 1.0.0 - First update with new version independent build system
+1.0.1 - Added option to copy url directly to clipboard
+1.0.2 - Implemented resource filtering for mod name/version/authors
+1.1.0 - Update to 1.6

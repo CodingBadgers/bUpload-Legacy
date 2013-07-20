@@ -20,6 +20,7 @@ package uk.codingbadgers.bUpload;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -33,13 +34,15 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.SimpleTexture;
+import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.Mod.Init;
-import cpw.mods.fml.common.Mod.PreInit;
+import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
@@ -86,7 +89,7 @@ public class mod_bUpload {
 	 *
 	 * @param event the event
 	 */
-	@PreInit
+	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		CONFIG = new Configuration(event.getSuggestedConfigurationFile());	
 		setupConfig();
@@ -113,7 +116,7 @@ public class mod_bUpload {
 	 *
 	 * @param event the event
 	 */
-	@Init
+	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		KeyBindingRegistry.registerKeyBinding(new bUploadKeyHandler(this));
 	}
@@ -140,7 +143,7 @@ public class mod_bUpload {
 			copyScreenBuffer(PIXEL_ARRAY, minecraft.displayWidth, minecraft.displayHeight);
 			m_lastScreenshot.image = new BufferedImage(minecraft.displayWidth, minecraft.displayHeight, 1);
 			m_lastScreenshot.image.setRGB(0, 0, minecraft.displayWidth, minecraft.displayHeight, PIXEL_ARRAY, 0, minecraft.displayWidth);
-			m_lastScreenshot.imageID = minecraft.renderEngine.allocateAndSetupTexture(m_lastScreenshot.image);
+			m_lastScreenshot.imageID = TextureUtil.func_110987_a(TextureUtil.func_110996_a(), m_lastScreenshot.image);
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			m_lastScreenshot.image = null;
@@ -168,7 +171,7 @@ public class mod_bUpload {
 		Minecraft minecraft = ModLoader.getMinecraftInstance();
 
 		if (m_lastScreenshot != null) {
-			String imagePath = Minecraft.getMinecraftDir().getAbsolutePath();
+			String imagePath = Minecraft.getMinecraft().mcDataDir.getAbsolutePath();
 			imagePath = imagePath.substring(0, imagePath.length() - 1);
 
 			imagePath += "screenshots" + File.separator + minecraft.thePlayer.username;
@@ -178,7 +181,7 @@ public class mod_bUpload {
 				imagePath += minecraft.getIntegratedServer().getFolderName() + File.separator;
 			} else {
 				imagePath += File.separator + "multiplayer" + File.separator;
-				imagePath += minecraft.getServerData().serverName + File.separator;
+				imagePath += getServerName() + File.separator;
 			}
 
 			imagePath += DATE_FORMAT.format(new Date()).toString();
@@ -202,6 +205,21 @@ public class mod_bUpload {
 				mod_bUpload.addUploadedImage(new UploadedImage(imagePath.substring(imagePath.lastIndexOf("\\") + 1), imagePath, m_lastScreenshot, true));
 			}
 		}
+	}
+	
+	private String getServerName() {
+		try {
+			Field serverNameField = Minecraft.class.getDeclaredField("serverName");
+			serverNameField.setAccessible(true);
+			return (String) serverNameField.get(Minecraft.getMinecraft());
+		} catch (NoSuchFieldException e) {
+			e.printStackTrace();
+		} catch (SecurityException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
+			e.printStackTrace();
+		}
+		return "Unkown";
 	}
 
 	/**
