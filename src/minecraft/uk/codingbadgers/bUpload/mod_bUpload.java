@@ -20,7 +20,6 @@ package uk.codingbadgers.bUpload;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Field;
 import java.nio.IntBuffer;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -34,18 +33,18 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.SimpleTexture;
 import net.minecraft.client.renderer.texture.TextureUtil;
 import net.minecraft.src.ModLoader;
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
+
 import cpw.mods.fml.client.registry.KeyBindingRegistry;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 /**
  * The Class bUpload.
@@ -84,6 +83,9 @@ public class mod_bUpload {
     /** The choice to remember. */
     public static int CHOICE_TO_REMEMBER = 0;
 
+	public static String server;
+	public static int port;
+
 	/**
 	 * Pre init.
 	 *
@@ -119,6 +121,7 @@ public class mod_bUpload {
 	@EventHandler
 	public void load(FMLInitializationEvent event) {
 		KeyBindingRegistry.registerKeyBinding(new bUploadKeyHandler(this));
+		NetworkRegistry.instance().registerConnectionHandler(new ConnectionHandler());
 	}
 
 	/**
@@ -172,16 +175,15 @@ public class mod_bUpload {
 
 		if (m_lastScreenshot != null) {
 			String imagePath = Minecraft.getMinecraft().mcDataDir.getAbsolutePath();
-			imagePath = imagePath.substring(0, imagePath.length() - 1);
 
-			imagePath += "screenshots" + File.separator + minecraft.thePlayer.username;
+			imagePath += File.separatorChar + "screenshots" + File.separatorChar + minecraft.thePlayer.username;
 
 			if (minecraft.isSingleplayer()) {
-				imagePath += File.separator + "single player" + File.separator;
-				imagePath += minecraft.getIntegratedServer().getFolderName() + File.separator;
+				imagePath += File.separatorChar + "single player" + File.separatorChar;
+				imagePath += minecraft.getIntegratedServer().getFolderName() + File.separatorChar;
 			} else {
-				imagePath += File.separator + "multiplayer" + File.separator;
-				imagePath += getServerName() + File.separator;
+				imagePath += File.separatorChar + "multiplayer" + File.separatorChar;
+				imagePath += server + File.separatorChar;
 			}
 
 			imagePath += DATE_FORMAT.format(new Date()).toString();
@@ -207,21 +209,6 @@ public class mod_bUpload {
 		}
 	}
 	
-	private String getServerName() {
-		try {
-			Field serverNameField = Minecraft.class.getDeclaredField("serverName");
-			serverNameField.setAccessible(true);
-			return (String) serverNameField.get(Minecraft.getMinecraft());
-		} catch (NoSuchFieldException e) {
-			e.printStackTrace();
-		} catch (SecurityException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		}
-		return "Unkown";
-	}
-
 	/**
 	 * Copy the screen buffer.
 	 *
