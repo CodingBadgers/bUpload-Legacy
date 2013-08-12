@@ -23,8 +23,8 @@
 
 	<!-- Versioning -->
 	<property name="mc.version" value="1.6.2"/>
-	<property name="forge.version" value="9.10.0.789"/>
-	<property name="project.version.full" value="1.1.1"/>
+	<property name="forge.version" value="9.10.0.828"/>
+	<property name="project.version.full" value="1.1.2"/>
 
 	<!-- Internal -->
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
@@ -246,12 +246,12 @@
 	
 	<!-- Default target to run -->
 	<target name="main">
-		<antcall target="package" />
+		<!-- <antcall target="package" /> -->
 		<antcall target="package-srg" />
 		<antcall target="cleanup" />    
 	</target>
 	
-	<target name="start" depends="compile, write-version">
+	<target name="start" depends="recompile, write-version">
 		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
 			<arg value="startclient.sh"/>
 		</exec>

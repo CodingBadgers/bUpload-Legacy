@@ -33,8 +33,8 @@ public class bUploadKeyHandler extends KeyHandler
 
     private boolean m_pressed = false;
 
-    static KeyBinding onScreenShot = new KeyBinding("Take Advanced Screenshot", Keyboard.KEY_F12);
-    static KeyBinding onUploadHistory = new KeyBinding("Screenshot History", Keyboard.KEY_EQUALS);
+    static KeyBinding onScreenShot = new KeyBinding("Take Advanced Screenshot", Keyboard.getKeyIndex(mod_bUpload.ADV_SS_KEYBINDING));
+    static KeyBinding onUploadHistory = new KeyBinding("Screenshot History", Keyboard.getKeyIndex(mod_bUpload.SS_HISTORY_KEYBINDING));
 
     public bUploadKeyHandler(mod_bUpload mod)
     {

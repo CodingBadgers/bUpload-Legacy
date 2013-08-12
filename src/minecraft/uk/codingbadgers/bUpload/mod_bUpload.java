@@ -29,6 +29,7 @@ import java.util.Date;
 import javax.imageio.ImageIO;
 
 import org.lwjgl.BufferUtils;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -43,6 +44,8 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.event.FMLInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 
@@ -53,36 +56,20 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 @NetworkMod(clientSideRequired = true, serverSideRequired = false)
 public class mod_bUpload {
 	
-	/** A pixel buffer to store the screen shot in. */
 	private static IntBuffer PIXEL_BUFFER = null;
-
-	/** A pixel array to store the pixel buffer in so we can convert it to an image an upload. */
 	private static int[] PIXEL_ARRAY = null;
-
-	/** Prefix for colour codes. */
 	public final static char COLOUR = 167;
-
-	/** Session history of uploads. */
 	private static ArrayList<UploadedImage> m_uploadHistory = new ArrayList<UploadedImage>();
-
-	/** The last screenshot taken. */
 	private bUploadScreenShot m_lastScreenshot = new bUploadScreenShot();
-
-	/** The Constant DATE_FORMAT. */
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
-
-	/** The config. */
+	
 	public static Configuration CONFIG = null;
-	
-	/** The should remember choice. */
 	public static boolean SHOULD_REMEMBER_CHOICE = false;
-	
-	/** The should copy to clipboard. */
 	public static boolean SHOULD_COPY_TO_CLIPBOARD = true;
-    
-    /** The choice to remember. */
     public static int CHOICE_TO_REMEMBER = 0;
-
+	public static String ADV_SS_KEYBINDING = null;
+	public static String SS_HISTORY_KEYBINDING = null;
+	
 	public static String server;
 	public static int port;
 
@@ -99,6 +86,7 @@ public class mod_bUpload {
 
 	private void setupConfig() {
 		CONFIG.load();
+		
 		Property remSave = CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", false);
 		remSave.comment = "Rember the choice of what do with the screenshots";
 		SHOULD_REMEMBER_CHOICE = remSave.getBoolean(false);
@@ -110,7 +98,38 @@ public class mod_bUpload {
 		Property remClipboard = CONFIG.get(Configuration.CATEGORY_GENERAL, "CopyToClipboard", true);
 		remClipboard.comment = "If the imgur link should be copied to your clipboard after it has been uploaded";
         SHOULD_COPY_TO_CLIPBOARD = remClipboard.getBoolean(true);
+        
+        Property keyBindingAdvSS = CONFIG.get("Keybindings", "advancedScreenshot", "F12");
+        keyBindingAdvSS.comment = "The key that should be used to take a screenshot with bUpload";
+        ADV_SS_KEYBINDING = keyBindingAdvSS.getString();
+        
+        Property keyBindingSSHist = CONFIG.get("Keybindings", "screenshotHistory", "EQUALS");
+        keyBindingSSHist.comment = "The key that should be used to view the screenshot history";
+        SS_HISTORY_KEYBINDING = keyBindingSSHist.getString();
+        
         CONFIG.save();
+	}
+
+	public static void saveKeyBindings() {
+		CONFIG.load();
+        Property keyBindingAdvSS = CONFIG.get("Keybindings", "advancedScreenshot", "F12");
+        Property keyBindingSSHist = CONFIG.get("Keybindings", "screenshotHistory", "EQUALS");
+        
+        keyBindingAdvSS.set(Keyboard.getKeyName(bUploadKeyHandler.onScreenShot.keyCode));
+        keyBindingSSHist.set(Keyboard.getKeyName(bUploadKeyHandler.onUploadHistory.keyCode));
+        CONFIG.save();
+	}
+
+	@EventHandler
+	public void serverStart(FMLServerStartingEvent event) {
+		System.out.println("Server starting");
+		saveKeyBindings();
+	}
+
+	@EventHandler
+	public void serverStop(FMLServerStoppingEvent event) {
+		System.out.println("Server stopping");
+		saveKeyBindings();
 	}
 
 	/**
@@ -176,14 +195,19 @@ public class mod_bUpload {
 		if (m_lastScreenshot != null) {
 			String imagePath = Minecraft.getMinecraft().mcDataDir.getAbsolutePath();
 
-			imagePath += File.separatorChar + "screenshots" + File.separatorChar + minecraft.thePlayer.username;
-
-			if (minecraft.isSingleplayer()) {
-				imagePath += File.separatorChar + "single player" + File.separatorChar;
-				imagePath += minecraft.getIntegratedServer().getFolderName() + File.separatorChar;
+			// for some reason player is null in the menu
+			if (minecraft.thePlayer == null) {
+				imagePath += File.separatorChar + "screenshots" + File.separatorChar + "menu" + File.separatorChar;
 			} else {
-				imagePath += File.separatorChar + "multiplayer" + File.separatorChar;
-				imagePath += server + File.separatorChar;
+				imagePath += File.separatorChar + "screenshots" + File.separatorChar + minecraft.thePlayer.username;
+			
+				if (minecraft.isSingleplayer()) {
+					imagePath += File.separatorChar + "single player" + File.separatorChar;
+					imagePath += minecraft.getIntegratedServer().getFolderName() + File.separatorChar;
+				} else {
+					imagePath += File.separatorChar + "multiplayer" + File.separatorChar;
+					imagePath += server + File.separatorChar;
+				}
 			}
 
 			imagePath += DATE_FORMAT.format(new Date()).toString();

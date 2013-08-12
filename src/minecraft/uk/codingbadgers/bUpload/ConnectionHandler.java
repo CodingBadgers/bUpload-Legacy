@@ -24,13 +24,16 @@ public class ConnectionHandler implements IConnectionHandler {
 		FMLLog.getLogger().info("Connected to " + server + ":" + port);
 		mod_bUpload.server = server;
 		mod_bUpload.port = port;
+		mod_bUpload.saveKeyBindings();
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {}
 
 	@Override
-	public void connectionClosed(INetworkManager manager) {}
+	public void connectionClosed(INetworkManager manager) {
+		mod_bUpload.saveKeyBindings();
+	}
 
 	@Override
 	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) {}
