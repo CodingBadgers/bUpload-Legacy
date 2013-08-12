@@ -3,3 +3,4 @@
 1.0.2 - Implemented resource filtering for mod name/version/authors
 1.1.0 - Update to 1.6
 1.1.1 - Potentially fix issue with OSX saving screen shots to incorrect folder (fixes windows as well), Fixes server name not being read correctly as well
+1.1.2 - Fixed keybindings not saving across sessions and fixed a Crash if taking a screenshot in the main menu
