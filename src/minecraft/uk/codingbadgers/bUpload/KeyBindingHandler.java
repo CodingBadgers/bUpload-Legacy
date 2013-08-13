@@ -22,7 +22,6 @@ import java.util.EnumSet;
 import org.lwjgl.input.Keyboard;
 
 import uk.codingbadgers.bUpload.gui.AdvancedScreenshotGUI;
-import uk.codingbadgers.bUpload.gui.ImgurLoginGui;
 import uk.codingbadgers.bUpload.gui.UploadHistoryGUI;
 
 import net.minecraft.client.Minecraft;
@@ -39,7 +38,6 @@ public class KeyBindingHandler extends KeyHandler
 
     static KeyBinding onScreenShot = new KeyBinding("Take Advanced Screenshot", Keyboard.getKeyIndex(bUpload.ADV_SS_KEYBINDING));
     static KeyBinding onUploadHistory = new KeyBinding("Screenshot History", Keyboard.getKeyIndex(bUpload.SS_HISTORY_KEYBINDING));
-    static KeyBinding debug = new KeyBinding("Debug", Keyboard.KEY_P);
 
     public KeyBindingHandler(bUpload mod)
     {
@@ -47,12 +45,10 @@ public class KeyBindingHandler extends KeyHandler
                 new KeyBinding[]
                 {
                     onScreenShot,
-                    onUploadHistory,
-                    debug
+                    onUploadHistory
                 },
                 new boolean[]
                 {
-                    false,
                     false,
                     false
                 }
@@ -82,10 +78,6 @@ public class KeyBindingHandler extends KeyHandler
         else if (m_pressed && kb.keyCode == onUploadHistory.keyCode && minecraft.currentScreen == null)
         {
             minecraft.displayGuiScreen(new UploadHistoryGUI(m_mod));
-        }
-        else if (m_pressed && kb.keyCode == debug.keyCode && minecraft.currentScreen == null) 
-        {
-        	minecraft.displayGuiScreen(new ImgurLoginGui());
         }
     }
 
