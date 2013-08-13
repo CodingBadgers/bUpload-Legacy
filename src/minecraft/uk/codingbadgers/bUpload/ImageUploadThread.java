@@ -91,7 +91,7 @@ public class ImageUploadThread implements Runnable
 	            final String imageName = responceData.get("datetime").getAsString();
 	
 	            bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
-	            bUpload.sendChatMessage("Image uploaded to " + bUpload.COLOUR + "6" + uploadUrl + " !");
+	            bUpload.sendChatMessage("Image uploaded to " + bUpload.COLOUR + "6" + uploadUrl);
 	           
 	            if (bUpload.SHOULD_COPY_TO_CLIPBOARD) {
 	            	GuiScreen.setClipboardString(uploadUrl);
