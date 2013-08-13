@@ -23,7 +23,6 @@ import java.util.List;
 
 import javax.imageio.ImageIO;
 
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.apache.commons.codec.binary.Base64;
@@ -35,15 +34,16 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class ImageUploadThread implements Runnable
 {
-    private bUploadScreenShot 		m_image = null;
-    private Minecraft 				m_minecraft = null;
+    private Screenshot 		m_image = null;
 
-    public ImageUploadThread(bUploadScreenShot image, Minecraft minecraft)
+    public ImageUploadThread(Screenshot image)
     {
         m_image = image;
-        m_minecraft = minecraft;
     }
 
     @Override
@@ -57,60 +57,58 @@ public class ImageUploadThread implements Runnable
      * @param image The image to upload
      * @return a formatted url to the uploaded image, or an error message
      */
-    private boolean Upload(bUploadScreenShot image)
+    private boolean Upload(Screenshot image)
     {
         try
         {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             ImageIO.write(image.image, "png", baos);
             String data = Base64.encodeBase64String(baos.toByteArray()).toString();
-            HttpPost hpost = new HttpPost("http://api.imgur.com/2/upload.xml");
+            
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-            nameValuePairs.add(new BasicNameValuePair("key", "07f5f5e3b1a9d856f6ae4a4e5d814729"));
+            nameValuePairs.add(new BasicNameValuePair("client_id", ImgurProfile.CLIENT_ID));
             nameValuePairs.add(new BasicNameValuePair("image", data));
             nameValuePairs.add(new BasicNameValuePair("type", "base64"));
+            
+            HttpPost hpost = new HttpPost("https://api.imgur.com/3/upload");
             hpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+           
+            if (ImgurProfile.getAccessToken() != null) {
+            	hpost.addHeader("Authorization", "Bearer " + ImgurProfile.getAccessToken());
+            } else {
+            	hpost.addHeader("Authorization", "Client-ID " + ImgurProfile.CLIENT_ID);
+            }
+            
             DefaultHttpClient client = new DefaultHttpClient();
             HttpResponse resp = client.execute(hpost);
             String result = EntityUtils.toString(resp.getEntity());
-            final String uploadUrl = extractXML(result, "original");
-            final String imageName = extractXML(result, "datetime");
-
-            if (uploadUrl == null || imageName == null)
-            {
-            	 m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.");
-            	 return false;
-            }
-
-            mod_bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
-            m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FImage uploaded to " + mod_bUpload.COLOUR + "6" + uploadUrl + "!");
-           
-            if (mod_bUpload.SHOULD_COPY_TO_CLIPBOARD) {
-            	GuiScreen.setClipboardString(uploadUrl);
-            	m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FUrl copied to clipboard!");
+            
+            JsonObject responce = new JsonParser().parse(result).getAsJsonObject();
+            JsonObject responceData = responce.get("data").getAsJsonObject();
+            
+            if (responce.has("success") && responce.get("success").getAsBoolean()) {           
+	            final String uploadUrl = responceData.get("link").getAsString();
+	            final String imageName = responceData.get("datetime").getAsString();
+	
+	            bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
+	            bUpload.sendChatMessage("Image uploaded to " + bUpload.COLOUR + "6" + uploadUrl + " !");
+	           
+	            if (bUpload.SHOULD_COPY_TO_CLIPBOARD) {
+	            	GuiScreen.setClipboardString(uploadUrl);
+	            	bUpload.sendChatMessage("Url copied to clipboard!");
+	            }
+            } else {
+            	bUpload.sendChatMessage("Failed to upload image.");
+            	bUpload.sendChatMessage(responceData.get("error").getAsString());
+           	 	return false;
             }
             return true;
         }
         catch (Exception ex)
         {
             ex.printStackTrace();
-            m_minecraft.ingameGUI.getChatGUI().printChatMessage(mod_bUpload.COLOUR + "6[bUpload] " + mod_bUpload.COLOUR + "FFailed to upload image.");
+            bUpload.sendChatMessage("Failed to upload image.");
             return false;
         }
-    }
-
-    private String extractXML(String XML, String element)
-    {
-        final String startElement = "<" + element + ">";
-        final String endElement = "</" + element + ">";
-        final int start = XML.indexOf(startElement) + startElement.length();
-        final int end = XML.indexOf(endElement);
-
-        if (start == -1 || end == -1)
-        {
-            return null;
-        }
-
-        return XML.substring(start, end);
     }
 }

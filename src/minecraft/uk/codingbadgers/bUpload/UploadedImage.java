@@ -40,7 +40,7 @@ public class UploadedImage
     public UploadedImage(
             String name,
             String url,
-            bUploadScreenShot image,
+            Screenshot image,
             boolean localFile
     )
     {

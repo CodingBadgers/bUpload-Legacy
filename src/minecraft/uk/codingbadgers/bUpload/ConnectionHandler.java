@@ -22,9 +22,9 @@ public class ConnectionHandler implements IConnectionHandler {
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
 		FMLLog.getLogger().info("Connected to " + server + ":" + port);
-		mod_bUpload.server = server;
-		mod_bUpload.port = port;
-		mod_bUpload.saveKeyBindings();
+		bUpload.server = server;
+		bUpload.port = port;
+		bUpload.saveKeyBindings();
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class ConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void connectionClosed(INetworkManager manager) {
-		mod_bUpload.saveKeyBindings();
+		bUpload.saveKeyBindings();
 	}
 
 	@Override
