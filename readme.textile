@@ -24,9 +24,14 @@ As well as this, pressing the '=' key (by default) will print out the players re
 
 h2. Checking out the code
 
-This is an svn repository, so you must use software such as tortouise SVN is required to checkout the code.
+This is an git repository, so you must use git softwere, either a git cli client or a git gui client like tortoise git.
 
 h2. Building
 
 bUpload is built with ant, so make sure that you have ant installed and on your path before you try and build.
 To setup the environment to build run @ant setup@ and then to build a version of bUpload run @ant main@, this will build a version dependent version, and a version independent in the bin folder in the root directory. The version dependent version will not have a minecraft version after the name eg. bUpload-1.0.0.zip is independant bUpload-1.0.0-1.5.2.zip is dependant.
+
+h2. Links
+
+"Minecraft Forums":http://www.minecraftforum.net/topic/1432205-162-bupload-upload-screenshots-straight-to-imgurcom/
+"McBadgerCraft":http://mcbadgercraft.com/
