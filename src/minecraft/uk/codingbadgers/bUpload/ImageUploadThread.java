@@ -107,7 +107,7 @@ public class ImageUploadThread implements Runnable
         catch (Exception ex)
         {
             ex.printStackTrace();
-            bUpload.sendChatMessage("Failed to upload image.");
+            bUpload.sendChatMessage("image.upload.fail", true);
             return false;
         }
     }
