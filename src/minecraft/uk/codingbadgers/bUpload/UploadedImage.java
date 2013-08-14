@@ -19,16 +19,9 @@ package uk.codingbadgers.bUpload;
 
 public class UploadedImage
 {
-    /** */
     private final String m_name;
-
-    /** */
     private final String m_url;
-
-    /** */
     private int m_imageID;
-    
-    /** */
     private boolean m_localFile;
 
     /**

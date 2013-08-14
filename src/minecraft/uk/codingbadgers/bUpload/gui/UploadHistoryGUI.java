@@ -33,6 +33,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
 public class UploadHistoryGUI extends GuiScreen
@@ -69,12 +70,12 @@ public class UploadHistoryGUI extends GuiScreen
         buttonList.add(new GuiButton(BUTTON_PREVIOUS, (width / 2) - (m_containerWidth / 2) - (70), ((height / 2) - (m_containerHeight / 2) + m_containerHeight) - 25, 60, 20, "Previous"));
         buttonList.add(new GuiButton(BUTTON_NEXT, (width / 2) + (m_containerWidth / 2) + (10), ((height / 2) - (m_containerHeight / 2) + m_containerHeight) - 25, 60, 20, "Next"));      
         
-        m_loginButton = new GuiButton(BUTTON_LOGIN, (width / 2) + (m_containerWidth / 2) + (5), 25, 110, 20, "Login to Imgur");
-    	m_logoutButton = new GuiButton(BUTTON_LOGOUT, (width / 2) + (m_containerWidth / 2) + (5), 50, 110, 20, "Logout");
+        m_loginButton = new GuiButton(BUTTON_LOGIN, (width / 2) + (m_containerWidth / 2) + (5), 25, 110, 20, I18n.func_135053_a("image.history.login"));
+    	m_logoutButton = new GuiButton(BUTTON_LOGOUT, (width / 2) + (m_containerWidth / 2) + (5), 50, 110, 20, I18n.func_135053_a("image.history.logout"));
     	m_logoutButton.drawButton = false;
     	
         if (ImgurProfile.getAccessToken() != null) {
-        	m_loginButton.displayString = "Welcome " + ImgurProfile.getUsername();
+        	m_loginButton.displayString = I18n.func_135052_a("image.history.loggedIn", ImgurProfile.getUsername());
         	m_loginButton.enabled = false;
         	m_logoutButton.drawButton = true;
         }
@@ -109,7 +110,7 @@ public class UploadHistoryGUI extends GuiScreen
             if (!imageInfo.isLocal()) {
             	drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
             } else {
-            	drawCenteredString(minecraft.fontRenderer, "Open Saved Image", (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
+            	drawCenteredString(minecraft.fontRenderer, I18n.func_135053_a("image.history.open"), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
             }
             	
             // draw the image preview
@@ -119,7 +120,7 @@ public class UploadHistoryGUI extends GuiScreen
         }
         else
         {
-            drawCenteredString(minecraft.fontRenderer,  "No Upload History", (width / 2), ((height / 2) - (m_containerHeight / 2)) + 132, 0xFFFFFFFF);
+            drawCenteredString(minecraft.fontRenderer,  I18n.func_135053_a("image.history.empty"), (width / 2), ((height / 2) - (m_containerHeight / 2)) + 132, 0xFFFFFFFF);
         }
 
         super.drawScreen(i, j, f);
@@ -184,7 +185,7 @@ public class UploadHistoryGUI extends GuiScreen
             case BUTTON_LOGOUT:
             {
             	ImgurProfile.forgetProfile();
-            	m_loginButton.displayString = "Login to Imgur";
+            	m_loginButton.displayString = I18n.func_135053_a("image.history.login");
             	m_loginButton.enabled = true;
             	m_logoutButton.drawButton = false;
             }
@@ -231,12 +232,12 @@ public class UploadHistoryGUI extends GuiScreen
 					dt.open(new File(imageInfo.getUrl()));
 				} catch (IOException e) {
 					mc.currentScreen = null;
-					mc.ingameGUI.getChatGUI().printChatMessage(((char)167) + "6[bUpload] " + ((char)167) + "FFailed open image from disk!");
-					mc.ingameGUI.getChatGUI().printChatMessage(((char)167) + "6[bUpload] " + ((char)167) + "FOpening file lcoation instead...");
+					bUpload.sendChatMessage("image.history.open.fail.1", true);
+					bUpload.sendChatMessage("image.history.open.fail.2", true);
 					try {
 						dt.open(new File(imageInfo.getUrl().replace(imageInfo.getName(), "")));
 					} catch (IOException e1) {
-						mc.ingameGUI.getChatGUI().printChatMessage(((char)167) + "6[bUpload] " + ((char)167) + "FFailed to open file location!");
+						bUpload.sendChatMessage("image.history.open.fail.3", true);
 					}
 				}
         	}

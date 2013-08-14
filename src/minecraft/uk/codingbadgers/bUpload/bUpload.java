@@ -35,7 +35,9 @@ import org.lwjgl.opengl.GL12;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.src.ModLoader;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.Property;
 
@@ -292,12 +294,36 @@ public class bUpload {
 	}
 	
 	public static void sendChatMessage(String message) {
+		sendChatMessage(message, false);
+	}
+	
+	public static void sendChatMessage(String key, boolean translate) {		
+		String message = key;
+		
+		if (translate) {
+			message = I18n.func_135053_a(key);
+		}
+		
 		if (Minecraft.getMinecraft().ingameGUI == null || Minecraft.getMinecraft().ingameGUI.getChatGUI() == null) {
 			System.err.println(message);
 			return;
 		}
 		
-		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(COLOUR + "6[bUpload]" + COLOUR + "f " + message);
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(EnumChatFormatting.GOLD + "[bUpload]" + EnumChatFormatting.RESET + " " + message);
 	}
-
+	
+	public static void sendChatMessage(String key, boolean translate, Object... object) {		
+		String message = key;
+		
+		if (translate) {
+			message = I18n.func_135052_a(key, object);
+		}
+		
+		if (Minecraft.getMinecraft().ingameGUI == null || Minecraft.getMinecraft().ingameGUI.getChatGUI() == null) {
+			System.err.println(message);
+			return;
+		}
+		
+		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(EnumChatFormatting.GOLD + "[bUpload]" + EnumChatFormatting.RESET + " " + message);
+	}
 }

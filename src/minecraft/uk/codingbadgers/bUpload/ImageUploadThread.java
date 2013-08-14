@@ -89,17 +89,17 @@ public class ImageUploadThread implements Runnable
             if (responce.has("success") && responce.get("success").getAsBoolean()) {           
 	            final String uploadUrl = responceData.get("link").getAsString();
 	            final String imageName = responceData.get("datetime").getAsString();
-	
+	            
 	            bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
-	            bUpload.sendChatMessage("Image uploaded to " + bUpload.COLOUR + "6" + uploadUrl);
-	           
+	            bUpload.sendChatMessage("image.upload.success", true, uploadUrl);
+	            
 	            if (bUpload.SHOULD_COPY_TO_CLIPBOARD) {
 	            	GuiScreen.setClipboardString(uploadUrl);
-	            	bUpload.sendChatMessage("Url copied to clipboard!");
+	            	bUpload.sendChatMessage("image.upload.fail", true);
 	            }
             } else {
-            	bUpload.sendChatMessage("Failed to upload image.");
-            	bUpload.sendChatMessage(responceData.get("error").getAsString());
+            	bUpload.sendChatMessage("image.upload.fail", true);
+            	bUpload.sendChatMessage(responceData.get("error").getAsString(), false);
            	 	return false;
             }
             return true;

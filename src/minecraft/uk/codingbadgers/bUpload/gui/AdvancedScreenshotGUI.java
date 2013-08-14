@@ -23,6 +23,7 @@ import uk.codingbadgers.bUpload.bUpload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
 
@@ -65,34 +66,34 @@ public class AdvancedScreenshotGUI extends GuiScreen
         int ypos = (height / 5);
         int buttonwidth = 160;
         
-        buttonList.add(new GuiButton(SAVE_TO_HD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Save image to hard drive"));
+        buttonList.add(new GuiButton(SAVE_TO_HD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.hdd")));
         ypos += 24;
         
-        buttonList.add(new GuiButton(SAVE_TO_IMGUR, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Save image to imgur.com"));
+        buttonList.add(new GuiButton(SAVE_TO_IMGUR, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.imgur")));
         ypos += 24;
         
-        buttonList.add(new GuiButton(SAVE_TO_BOTH, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Save image to both"));
+        buttonList.add(new GuiButton(SAVE_TO_BOTH, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.both")));
         ypos += 24;
         
-        m_rememberCheckBox = new GuiCheckBox(REMEMBER_CHOICE, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Remember Choice");
+        m_rememberCheckBox = new GuiCheckBox(REMEMBER_CHOICE, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.remember"));
         m_rememberCheckBox.setChecked(bUpload.SHOULD_REMEMBER_CHOICE);
         buttonList.add(m_rememberCheckBox);
         ypos += 24;
         
-        m_copyToClipboard = new GuiCheckBox(COPY_TO_CLIPBOARD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, "Copy to Clipboard");
+        m_copyToClipboard = new GuiCheckBox(COPY_TO_CLIPBOARD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.copy"));
         m_copyToClipboard.setChecked(bUpload.SHOULD_COPY_TO_CLIPBOARD);
         buttonList.add(m_copyToClipboard);
         ypos += 24;
         buttonwidth = 75;
         
-        buttonList.add(new GuiButton(HISTORY, width / 2 - 80, ypos, buttonwidth, 20, "History"));
-        buttonList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, "Cancel"));
+        buttonList.add(new GuiButton(HISTORY, width / 2 - 80, ypos, buttonwidth, 20,  I18n.func_135052_a("image.options.history")));
+        buttonList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20,  I18n.func_135052_a("image.options.cancel")));
         ypos += 24;
         buttonwidth = 160;
         
-        GuiButton gui = new GuiButton(LOGIN, width / 2 - (buttonwidth / 2), ypos, 160, 20, "Login to Imgur");
+        GuiButton gui = new GuiButton(LOGIN, width / 2 - (buttonwidth / 2), ypos, 160, 20,  I18n.func_135052_a("image.options.login"));
         if (ImgurProfile.getAccessToken() != null) {
-        	gui.displayString = "Logged in as " + ImgurProfile.getUsername();
+        	gui.displayString =  I18n.func_135052_a("image.options.loggedIn", ImgurProfile.getUsername());
         	gui.enabled = false;
         }
     	buttonList.add(gui);
@@ -188,7 +189,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
     public void drawScreen(int i, int j, float f)
     {
         drawDefaultBackground();
-        drawCenteredString(fontRenderer, "bUpload - Advanced Screenshot Manager", width / 2, height / 5 - 20, 0xffffff);
+        drawCenteredString(fontRenderer, I18n.func_135052_a("image.options.title"), width / 2, height / 5 - 20, 0xffffff);
         super.drawScreen(i, j, f);
     }
 }
