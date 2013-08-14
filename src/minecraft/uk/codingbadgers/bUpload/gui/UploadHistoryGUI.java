@@ -94,7 +94,7 @@ public class UploadHistoryGUI extends GuiScreen
         Minecraft minecraft = Minecraft.getMinecraft();
         drawDefaultBackground();
         // load our container image
-        minecraft.renderEngine.func_110577_a(new ResourceLocation("textures/gui/bupload-history.png"));
+        minecraft.renderEngine.func_110577_a(new ResourceLocation("bUpload:textures/gui/bupload-history.png"));
         GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
         drawTexturedModalRect((width / 2) - (m_containerWidth / 2), (height / 2) - (m_containerHeight / 2), 0, 0, m_containerWidth, m_containerHeight);
         UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);

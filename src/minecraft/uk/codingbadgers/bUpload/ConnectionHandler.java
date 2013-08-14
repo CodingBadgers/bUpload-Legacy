@@ -5,7 +5,7 @@ import net.minecraft.network.NetLoginHandler;
 import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
-import cpw.mods.fml.common.FMLLog;
+
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.Player;
 
@@ -21,7 +21,6 @@ public class ConnectionHandler implements IConnectionHandler {
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
-		FMLLog.getLogger().info("Connected to " + server + ":" + port);
 		bUpload.server = server;
 		bUpload.port = port;
 		bUpload.saveKeyBindings();
