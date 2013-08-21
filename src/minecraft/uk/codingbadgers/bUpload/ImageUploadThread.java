@@ -95,7 +95,7 @@ public class ImageUploadThread implements Runnable
 	            
 	            if (bUpload.SHOULD_COPY_TO_CLIPBOARD) {
 	            	GuiScreen.setClipboardString(uploadUrl);
-	            	bUpload.sendChatMessage("image.upload.fail", true);
+	            	bUpload.sendChatMessage("image.upload.copy", true);
 	            }
             } else {
             	bUpload.sendChatMessage("image.upload.fail", true);

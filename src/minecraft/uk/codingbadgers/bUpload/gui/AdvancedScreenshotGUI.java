@@ -22,12 +22,11 @@ import uk.codingbadgers.bUpload.ImgurProfile;
 import uk.codingbadgers.bUpload.bUpload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.src.ModLoader;
 import net.minecraftforge.common.Configuration;
 
-public class AdvancedScreenshotGUI extends GuiScreen
+public class AdvancedScreenshotGUI extends bUploadGuiScreen
 {
     private static final int SAVE_TO_HD = 1;
     private static final int SAVE_TO_IMGUR = 2;
@@ -92,7 +91,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
         buttonwidth = 160;
         
         GuiButton gui = new GuiButton(LOGIN, width / 2 - (buttonwidth / 2), ypos, 160, 20,  I18n.func_135052_a("image.options.login"));
-        if (ImgurProfile.getAccessToken() != null) {
+        if (ImgurProfile.isLoggedIn()) {
         	gui.displayString =  I18n.func_135052_a("image.options.loggedIn", ImgurProfile.getUsername());
         	gui.enabled = false;
         }
@@ -158,7 +157,7 @@ public class AdvancedScreenshotGUI extends GuiScreen
 
             case LOGIN:
             {
-                mc.displayGuiScreen(new ImgurLoginGui());
+                mc.displayGuiScreen(new ImgurLoginGui(this));
                 break;
             }
             

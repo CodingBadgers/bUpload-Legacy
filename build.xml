@@ -16,7 +16,6 @@
 
 	<!-- High level directories -->
 	<property name="classes.dir" value="${build.dir}/classes"/>
-	<property name="classes.srg.dir" value="${build.dir}/classes_srg"/>
 	<property name="forge.dir" value="${build.dir}/forge"/>
 	<property name="mcp.dir" value="${forge.dir}/mcp"/>
 	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
@@ -24,7 +23,7 @@
 	<!-- Versioning -->
 	<property name="mc.version" value="1.6.2"/>
 	<property name="forge.version" value="9.10.0.828"/>
-	<property name="project.version.full" value="1.1.3-beta"/>
+	<property name="project.version.full" value="1.2.0-beta"/>
 
 	<!-- Internal -->
 	<property name="forge.name" value="minecraftforge-src-${mc.version}-${forge.version}.zip"/>
@@ -38,8 +37,6 @@
 			</and>
 		</not>
 	</condition>
-	
-	<property name="recompile" value="true" />
 
 	<filterset id="filter">
 		<filter token="MOD_ID" value="${mod.id}" />
@@ -48,6 +45,7 @@
 		<filter token="MC_VERSION" value="${mc.version}" />
 		<filter token="BUILD_NUMBER" value="${build.number}" />
 		<filter token="AUTHOR" value="TheFish97 and N3wton" />
+		<filter token="FORGE_VERSION" value="${forge.version}" />
 	</filterset>
 
 	<mkdir dir="${download.dir}"/>
@@ -89,22 +87,48 @@
 		<copy todir="${mcp.dir}/lib">
 			<fileset dir="${lib.dir}" />
 		</copy>
-
-		<property name="recompile" value="false" />
 	</target>
 
-	<target name="copy-src">
+	<target name="copy-src" depends="copy-res">
 		<copy todir="${mcpsrc.dir}">
 			<fileset dir="${src.dir}"/>
 			<filterset refid="filter" />
 		</copy>
+
+		<copy todir="${mcpsrc.dir}/minecraft/assets">
+			<fileset dir="${classes.dir}/assets"/>
+		</copy>
 	</target>
 
-	<target name="recompile" depends="setup,copy-src"  if="recompile">
-	    
+	<target name="copy-res">
 		<delete dir="${classes.dir}"/>
 		<mkdir dir="${classes.dir}"/>
 
+		<!-- Copy mcmod.info -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${resources.dir}">
+				<include name="mcmod.info" />
+				<include name="**/*.mcmeta"/>
+				<include name="**/*.lang"  />
+			</fileset>
+			<filterset refid="filter"/>
+		</copy>
+		
+		<!-- Create english language files -->
+		<copy file="${classes.dir}/assets/bupload/lang/en_GB.lang" tofile="${classes.dir}/assets/bupload/lang/en_US.lang" />
+		<copy file="${classes.dir}/assets/bupload/lang/en_GB.lang" tofile="${classes.dir}/assets/bupload/lang/en_PT.lang" />
+
+		<!-- Copy resources -->
+		<copy todir="${classes.dir}">
+			<fileset dir="${resources.dir}">
+				<exclude name="mcmod.info" />
+				<exclude name="**/*.mcmeta"/>
+				<exclude name="**/*.lang"  />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="recompile" depends="setup,copy-src">
 		<!-- Recompile -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c recompile.bat"/>
@@ -120,52 +144,9 @@
 				<resourcecontains resource="${mcp.dir}/logs/client_compile.log" substring="error:"/>
 			</condition>
 		</fail>
-		
-		<property name="recompile" value="false" />
 	</target>
 	
 	<target name="compile" depends="recompile">
-		<!-- Reobfuscate -->
-		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
-			<arg line="/c reobfuscate.bat"/>
-		</exec>
-
-		<exec dir="${mcp.dir}" executable="sh" osfamily="unix">
-			<arg value="reobfuscate.sh"/>
-		</exec>
-		
-		<delete dir="${classes.dir}" />
-
-		<!-- Copy classes -->
-		<copy todir="${classes.dir}">
-			<fileset dir="${mcp.dir}/reobf/minecraft"/>
-		</copy>
-
-		<!-- Copy mcmod.info -->
-		<copy todir="${classes.dir}">
-			<fileset dir="${resources.dir}">
-				<include name="mcmod.info"/>
-			</fileset>
-			<filterset refid="filter"/>
-		</copy>
-		
-		<!-- Copy resources -->
-		<copy todir="${classes.dir}">
-			<fileset dir="${resources.dir}">
-				<exclude name="mcmod.info"/>
-			</fileset>
-		</copy>
-		
-		<!-- Copy localizations -->
-    	<copy todir="${classes.dir}" failonerror="false">
-    		<fileset dir="${lang.dir}">
-                <exclude name="README.md"/>
-    		</fileset>
-			<filterset refid="filter" />
-    	</copy>
-	</target>
-	
-	<target name="compile-srg" depends="recompile">
 		<!-- Reobfuscate -->
 		<exec dir="${mcp.dir}" executable="cmd" osfamily="windows">
 			<arg line="/c reobfuscate_srg.bat"/>
@@ -175,35 +156,10 @@
 			<arg value="reobfuscate_srg.sh"/>
 		</exec>
 
-		<delete dir="${classes.srg.dir}" />
-		
 		<!-- Copy classes -->
-		<copy todir="${classes.srg.dir}">
+		<copy todir="${classes.dir}">
 			<fileset dir="${mcp.dir}/reobf/minecraft"/>
 		</copy>
-
-		<!-- Copy mcmod.info -->
-		<copy todir="${classes.srg.dir}">
-			<fileset dir="${resources.dir}">
-				<include name="mcmod.info"/>
-			</fileset>
-			<filterset refid="filter"/>
-		</copy>
-		
-		<!-- Copy resources -->
-		<copy todir="${classes.srg.dir}">
-			<fileset dir="${resources.dir}">
-				<exclude name="mcmod.info"/>
-			</fileset>
-		</copy>
-
-		<!-- Copy localizations -->
-    	<copy todir="${classes.dir}" failonerror="false">
-    		<fileset dir="${lang.dir}">
-                <exclude name="README.md"/>
-    		</fileset>
-			<filterset refid="filter" />
-    	</copy>
 	</target>
 
 	<!-- write the version file for this build -->
@@ -212,46 +168,26 @@
 		
 		<propertyfile file="${classes.dir}/${ant.project.name}" comment="${ant.project.name} v:${project.version.full}">
 			<entry  key="version" value="${project.version.full}" />
-			<entry  key="minecraft-version" value="${mc.version}" />
 			<entry  key="build-date" type="date" value="now"      />
-		</propertyfile>
-	</target>
-	
-	<!-- write the version file for this build -->
-	<target name="write-version-srg">	
-		<delete file="${classes.srg.dir}/${ant.project.name}" failonerror="false"/>
-		
-		<propertyfile file="${classes.srg.dir}/${ant.project.name}" comment="${ant.project.name} v:${project.version.full}">
-			<entry  key="version" value="${project.version.full}"/>
-			<entry  key="build-date" type="date" value="now" />
 		</propertyfile>
 	</target>
 	
 	<!-- Package the compiled files -->
 	<target name="package" depends="compile,write-version">
 		<mkdir dir="${jar.dir}"/>
-		<delete file="${jar.dir}/${ant.project.name}-${project.version.full}-${mc.version}.jar" />		
-		<jar destfile="${jar.dir}/${ant.project.name}-${project.version.full}-${mc.version}.jar" basedir="${classes.dir}"/>
-	</target>
-
-	<!-- Package the compiled files -->
-	<target name="package-srg" depends="compile-srg,write-version-srg">
-		<mkdir dir="${jar.dir}"/>
 		<delete file="${jar.dir}/${ant.project.name}-${project.version.full}.jar" />		
-		<jar destfile="${jar.dir}/${ant.project.name}-${project.version.full}.jar" basedir="${classes.srg.dir}"/>
+		<jar destfile="${jar.dir}/${ant.project.name}-${project.version.full}.jar" basedir="${classes.dir}"/>
 	</target>
 
 	<target name="cleanup">
 		<delete dir="${mcpsrc.dir}/minecraft/uk" failonerror="false"/>
 		<delete dir="${mcp.dir}/rebof/minecraft" failonerror="false"/>
-		<!-- shouldn't be created but just to be sure -->
 		<delete dir="${jar.dir}/changelog" failonerror="false"/>
 	</target>
 	
 	<!-- Default target to run -->
 	<target name="main">
-		<!-- <antcall target="package" /> -->
-		<antcall target="package-srg" />
+		<antcall target="package" />
 		<antcall target="cleanup" />    
 	</target>
 	

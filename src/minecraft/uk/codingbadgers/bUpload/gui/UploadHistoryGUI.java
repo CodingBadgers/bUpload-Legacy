@@ -24,211 +24,176 @@ import java.net.URI;
 
 import org.lwjgl.opengl.GL11;
 
-import uk.codingbadgers.bUpload.ImgurProfile;
 import uk.codingbadgers.bUpload.UploadedImage;
 import uk.codingbadgers.bUpload.bUpload;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiConfirmOpenLink;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.util.ResourceLocation;
 
-public class UploadHistoryGUI extends GuiScreen
-{
-    /** Access to the core mod */
-    private bUpload				m_mod = null;
+public class UploadHistoryGUI extends bUploadGuiScreen {
+	
+	private bUpload m_mod = null;
 
-    private static final int		m_containerWidth = 176;
-    private static final int		m_containerHeight = 222;
-    private static final int		BUTTON_PREVIOUS = 0;
-    private static final int		BUTTON_NEXT = 1;
-    private static final int 		BUTTON_LOGIN = 2;
-    private static final int 		BUTTON_LOGOUT = 3;
-    private int 					m_currentImage = 0;
-	private GuiButton 				m_loginButton;
-	private GuiButton 				m_logoutButton;
+	private static final int COTAINER_WIDTH = 176;
+	private static final int CONTAINER_HIGHT = 222;
+	
+	private static final int BUTTON_PREVIOUS = 0;
+	private static final int BUTTON_NEXT = 1;
+	private static final int BUTTON_SETTINGS = 2;
+	
+	private int m_currentImage = 0;
+	private GuiButton m_settingsButton;
 
-    /**
-     * Default constructor
-     * @param mod 		Access to our main mod instance
-     */
-    public UploadHistoryGUI(bUpload mod)
-    {
-        m_mod = mod;
-    }
+	/**
+	 * Default constructor
+	 * 
+	 * @param mod
+	 *            Access to our main mod instance
+	 */
+	public UploadHistoryGUI(bUpload mod) {
+		m_mod = mod;
+	}
 
-    /**
-     * Initialise the gui, adding buttons to the screen
-     */
-    @SuppressWarnings("unchecked")
-	public void initGui()
-    {
-        buttonList.clear();
-        buttonList.add(new GuiButton(BUTTON_PREVIOUS, (width / 2) - (m_containerWidth / 2) - (70), ((height / 2) - (m_containerHeight / 2) + m_containerHeight) - 25, 60, 20, "Previous"));
-        buttonList.add(new GuiButton(BUTTON_NEXT, (width / 2) + (m_containerWidth / 2) + (10), ((height / 2) - (m_containerHeight / 2) + m_containerHeight) - 25, 60, 20, "Next"));      
-        
-        m_loginButton = new GuiButton(BUTTON_LOGIN, (width / 2) + (m_containerWidth / 2) + (5), 25, 110, 20, I18n.func_135053_a("image.history.login"));
-    	m_logoutButton = new GuiButton(BUTTON_LOGOUT, (width / 2) + (m_containerWidth / 2) + (5), 50, 110, 20, I18n.func_135053_a("image.history.logout"));
-    	m_logoutButton.drawButton = false;
-    	
-        if (ImgurProfile.getAccessToken() != null) {
-        	m_loginButton.displayString = I18n.func_135052_a("image.history.loggedIn", ImgurProfile.getUsername());
-        	m_loginButton.enabled = false;
-        	m_logoutButton.drawButton = true;
-        }
-        
-    	buttonList.add(m_loginButton);
-    	buttonList.add(m_logoutButton);
-    }
+	/**
+	 * Initialise the gui, adding buttons to the screen
+	 */
+	@SuppressWarnings("unchecked")
+	public void initGui() {
+		buttonList.clear();
+		buttonList.add(new GuiButton(BUTTON_PREVIOUS, (width / 2) - (COTAINER_WIDTH / 2) - (70), ((height / 2) - (CONTAINER_HIGHT / 2) + CONTAINER_HIGHT) - 25, 60, 20, "Previous"));
+		buttonList.add(new GuiButton(BUTTON_NEXT, (width / 2) + (COTAINER_WIDTH / 2) + (10), ((height / 2) - (CONTAINER_HIGHT / 2) + CONTAINER_HIGHT) - 25, 60, 20, "Next"));
 
-    /**
-     * Draw the container image to the screen
-     * @param
-     * @param
-     * @param
-     */
-    public void drawScreen(int i, int j, float f)
-    {
-        Minecraft minecraft = Minecraft.getMinecraft();
-        drawDefaultBackground();
-        // load our container image
-        minecraft.renderEngine.func_110577_a(new ResourceLocation("bUpload:textures/gui/bupload-history.png"));
-        GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-        drawTexturedModalRect((width / 2) - (m_containerWidth / 2), (height / 2) - (m_containerHeight / 2), 0, 0, m_containerWidth, m_containerHeight);
-        UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+		m_settingsButton = new GuiButton(BUTTON_SETTINGS, (width / 2) + (COTAINER_WIDTH / 2) + (10), (this.height / 2) - (CONTAINER_HIGHT / 2) + 5, 60, 20, I18n.func_135053_a("image.history.settings"));
+		buttonList.add(m_settingsButton);
+	}
 
-        if (imageInfo != null)
-        {
-            // draw the image information
-            int yOffset = 132;
-            drawCenteredString(minecraft.fontRenderer, imageInfo.getName(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFFFFF);
-            yOffset += 16;
-            
-            if (!imageInfo.isLocal()) {
-            	drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
-            } else {
-            	drawCenteredString(minecraft.fontRenderer, I18n.func_135053_a("image.history.open"), (width / 2), ((height / 2) - (m_containerHeight / 2)) + yOffset, 0xFFFFAA00);
-            }
-            	
-            // draw the image preview
-            GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageInfo.getImageID());
-            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-            drawTexturedModalRectSized((width / 2) - (m_containerWidth / 2) + 8, (height / 2) - (m_containerHeight / 2) + 18, 0, 0, 160, 101, 256, 256);
-        }
-        else
-        {
-            drawCenteredString(minecraft.fontRenderer,  I18n.func_135053_a("image.history.empty"), (width / 2), ((height / 2) - (m_containerHeight / 2)) + 132, 0xFFFFFFFF);
-        }
+	/**
+	 * Draw the container image to the screen
+	 * 
+	 * @param
+	 * @param
+	 * @param
+	 */
+	public void drawScreen(int i, int j, float f) {
+		Minecraft minecraft = Minecraft.getMinecraft();
+		drawDefaultBackground();
+		// load our container image
+		minecraft.renderEngine.func_110577_a(new ResourceLocation("bUpload:textures/gui/bupload-history.png"));
+		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+		drawTexturedModalRect((width / 2) - (COTAINER_WIDTH / 2), (height / 2) - (CONTAINER_HIGHT / 2), 0, 0, COTAINER_WIDTH, CONTAINER_HIGHT);
+		UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
 
-        super.drawScreen(i, j, f);
-    }
+		if (imageInfo != null) {
+			// draw the image information
+			int yOffset = 132;
+			drawCenteredString(minecraft.fontRenderer, imageInfo.getName(), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + yOffset, 0xFFFFFFFF);
+			yOffset += 16;
 
-    /**
-     * Draws a textured rectangle at the stored z-value. Args: x, y, u, v, width, height, uvwidth, uvheight
-     */
-    public void drawTexturedModalRectSized(int x, int y, int u, int v, int width, int height, int uvwidth, int uvheight)
-    {
-        final float var7 = 0.00390625F;
-        final  float var8 = 0.00390625F;
-        Tessellator quad = Tessellator.instance;
-        quad.startDrawingQuads();
-        quad.addVertexWithUV((double)(x), (double)(y + height), (double)zLevel, (double)(u * var7), (double)((v + uvheight) * var8));
-        quad.addVertexWithUV((double)(x + width), (double)(y + height), (double)zLevel, (double)((u + uvwidth) * var7), (double)((v + uvheight) * var8));
-        quad.addVertexWithUV((double)(x + width), (double)(y), (double)zLevel, (double)((u + uvwidth) * var7), (double)(v * var8));
-        quad.addVertexWithUV((double)(x), (double)(y), (double)zLevel, (double)(u * var7), (double)(v * var8));
-        quad.draw();
-    }
+			if (!imageInfo.isLocal()) {
+				drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + yOffset, 0xFFFFAA00);
+			} else {
+				drawCenteredString(minecraft.fontRenderer, I18n.func_135053_a("image.history.open"), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + yOffset, 0xFFFFAA00);
+			}
 
-    /**
-     * Called when a button is pressed by a user
-     */
-    public void actionPerformed(GuiButton button)
-    {
-        switch (button.id)
-        {
-            case BUTTON_PREVIOUS:
-            {
-                m_currentImage--;
+			// draw the image preview
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, imageInfo.getImageID());
+			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
+			drawTexturedModalRectSized((width / 2) - (COTAINER_WIDTH / 2) + 8, (height / 2) - (CONTAINER_HIGHT / 2) + 18, 0, 0, 160, 101, 256, 256);
+		} else {
+			drawCenteredString(minecraft.fontRenderer, I18n.func_135053_a("image.history.empty"), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + 132, 0xFFFFFFFF);
+		}
 
-                if (m_currentImage < 0)
-                {
-                    m_currentImage = m_mod.uploadHistorySize() - 1;
-                }
+		super.drawScreen(i, j, f);
+	}
 
-                if (m_currentImage < 0)
-                {
-                    m_currentImage = 0;
-                }
-            }
-            break;
+	/**
+	 * Draws a textured rectangle at the stored z-value. Args: x, y, u, v,
+	 * width, height, uvwidth, uvheight
+	 */
+	public void drawTexturedModalRectSized(int x, int y, int u, int v, int width, int height, int uvwidth, int uvheight) {
+		final float var7 = 0.00390625F;
+		final float var8 = 0.00390625F;
+		Tessellator quad = Tessellator.instance;
+		quad.startDrawingQuads();
+		quad.addVertexWithUV((double) (x), (double) (y + height), (double) zLevel, (double) (u * var7), (double) ((v + uvheight) * var8));
+		quad.addVertexWithUV((double) (x + width), (double) (y + height), (double) zLevel, (double) ((u + uvwidth) * var7), (double) ((v + uvheight) * var8));
+		quad.addVertexWithUV((double) (x + width), (double) (y), (double) zLevel, (double) ((u + uvwidth) * var7), (double) (v * var8));
+		quad.addVertexWithUV((double) (x), (double) (y), (double) zLevel, (double) (u * var7), (double) (v * var8));
+		quad.draw();
+	}
 
-            case BUTTON_NEXT:
-            {
-                m_currentImage++;
+	/**
+	 * Called when a button is pressed by a user
+	 */
+	public void actionPerformed(GuiButton button) {
+		switch (button.id) {
+		case BUTTON_PREVIOUS: {
+			m_currentImage--;
 
-                if (m_currentImage >= m_mod.uploadHistorySize())
-                {
-                    m_currentImage = 0;
-                }
-            }
-            break;
-            
-            case BUTTON_LOGIN:
-            {
-            	mc.displayGuiScreen(new ImgurLoginGui());
-            }
-            break;
-            
-            case BUTTON_LOGOUT:
-            {
-            	ImgurProfile.forgetProfile();
-            	m_loginButton.displayString = I18n.func_135053_a("image.history.login");
-            	m_loginButton.enabled = true;
-            	m_logoutButton.drawButton = false;
-            }
-            break;
-        }
-    }
+			if (m_currentImage < 0) {
+				m_currentImage = m_mod.uploadHistorySize() - 1;
+			}
 
-    /**
-     * Called when the mouse is clicked.
-     */
-    protected void mouseClicked(int x, int y, int button)
-    {
-        super.mouseClicked(x, y, button);
+			if (m_currentImage < 0) {
+				m_currentImage = 0;
+			}
+		}
+			break;
 
-        if (x < (width / 2) - (m_containerWidth / 2) + 12)
-        {
-            return;
-        }
+		case BUTTON_NEXT: {
+			m_currentImage++;
 
-        if (x > (width / 2) - (m_containerWidth / 2) + m_containerWidth - 12)
-        {
-            return;
-        }
+			if (m_currentImage >= m_mod.uploadHistorySize()) {
+				m_currentImage = 0;
+			}
+		}
+			break;
 
-        if (y < ((height / 2) - (m_containerHeight / 2)) + 148)
-        {
-            return;
-        }
+		case BUTTON_SETTINGS: {
+			mc.displayGuiScreen(new SettingsGUI(m_mod));
+		}
+			break;
+		}
+	}
 
-        if (y > ((height / 2) - (m_containerHeight / 2)) + 158)
-        {
-            return;
-        }
+	/**
+	 * Called when the mouse is clicked.
+	 */
+	protected void mouseClicked(int x, int y, int button) {
+		super.mouseClicked(x, y, button);
 
-        UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+		if (x < (width / 2) - (COTAINER_WIDTH / 2) + 12) {
+			return;
+		}
 
-        if (imageInfo != null)
-        {
-        	if (!imageInfo.isLocal()) {
-        		mc.displayGuiScreen(new GuiConfirmOpenLink(this, imageInfo.getUrl(), 0, false));
-        	} else {
-        		Desktop dt = Desktop.getDesktop();
-        		try {
+		if (x > (width / 2) - (COTAINER_WIDTH / 2) + COTAINER_WIDTH - 12) {
+			return;
+		}
+
+		if (y < ((height / 2) - (CONTAINER_HIGHT / 2)) + 148) {
+			return;
+		}
+
+		if (y > ((height / 2) - (CONTAINER_HIGHT / 2)) + 158) {
+			return;
+		}
+
+		UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+
+		if (imageInfo != null) {
+			if (!imageInfo.isLocal()) {
+				if (mc.gameSettings.chatLinksPrompt) {
+					mc.displayGuiScreen(new GuiConfirmOpenLink(this, imageInfo.getUrl(), 0, false));
+				} else {
+					openUrl();
+				}
+			} else {
+				Desktop dt = Desktop.getDesktop();
+				try {
 					dt.open(new File(imageInfo.getUrl()));
 				} catch (IOException e) {
 					mc.currentScreen = null;
@@ -240,33 +205,31 @@ public class UploadHistoryGUI extends GuiScreen
 						bUpload.sendChatMessage("image.history.open.fail.3", true);
 					}
 				}
-        	}
-        }
-    }
+			}
+		}
+	}
 
-    /**
-     * Called when the user clicks a button on the 'should i open that link' gui
-     */
-    public void confirmClicked(boolean openUrl, int par2)
-    {
-        if (openUrl)
-        {
-            UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+	/**
+	 * Called when the user clicks a button on the 'should i open that link' gui
+	 */
+	public void confirmClicked(boolean openUrl, int par2) {
+		if (openUrl) {
+			openUrl();
+		}
 
-            if (imageInfo != null)
-            {
-                try
-                {
-                	Desktop dt = Desktop.getDesktop();
-                	dt.browse(URI.create(imageInfo.getUrl()));
-                }
-                catch (Throwable var4)
-                {
-                    var4.printStackTrace();
-                }
-            }
-        }
+		mc.displayGuiScreen(this);
+	}
+	
+	public void openUrl() {
+		UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
 
-        mc.displayGuiScreen(this);
-    }
+		if (imageInfo != null) {
+			try {
+				Desktop dt = Desktop.getDesktop();
+				dt.browse(URI.create(imageInfo.getUrl()));
+			} catch (Throwable var4) {
+				var4.printStackTrace();
+			}
+		}
+	}
 }

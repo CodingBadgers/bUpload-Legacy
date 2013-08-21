@@ -81,7 +81,7 @@ public class ImgurProfile {
         	tokenExpire = new Date(new Date().getTime() + 3600000);
         	
         	saveRefreshToken();
-        	bUpload.sendChatMessage("Logged in on Imgur as " + username);
+        	bUpload.sendChatMessage("image.auth.login", true, "Imgur", username);
         } else {
         	accessToken = null;
         	refreshToken = "";
@@ -115,6 +115,11 @@ public class ImgurProfile {
     	username = null;
     	
     	saveRefreshToken();
+    	bUpload.sendChatMessage("image.auth.logout", true, "Imgur");
+	}
+	
+	public static boolean isLoggedIn() {
+		return getAccessToken() != null;
 	}
 
 }

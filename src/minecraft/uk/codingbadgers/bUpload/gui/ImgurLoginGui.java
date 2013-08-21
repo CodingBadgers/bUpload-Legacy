@@ -34,16 +34,18 @@ public class ImgurLoginGui extends GuiScreen {
 	private static final int CANCEL = 1;
 	private GuiTextField pinCode;
 	private boolean linkGiven = false;
+	private bUploadGuiScreen parent;
 
-	public ImgurLoginGui() {
+	public ImgurLoginGui(bUploadGuiScreen parent) {
+		this.parent = parent;
 	}
-	
+
 	@Override
 	protected void keyTyped(char par1, int par2) {
 		if (!pinCode.isFocused()) {
 			pinCode.setFocused(true);
 		}
-		
+
 		pinCode.textboxKeyTyped(par1, par2);
 		super.keyTyped(par1, par2);
 	}
@@ -57,10 +59,12 @@ public class ImgurLoginGui extends GuiScreen {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			mc.displayGuiScreen(null);
+			parent.updateLogin();
+			mc.displayGuiScreen(parent);
 			break;
 		case CANCEL:
-			mc.displayGuiScreen(null);
+			parent.updateLogin();
+			mc.displayGuiScreen(parent);
 			break;
 		default:
 			break;
@@ -76,38 +80,38 @@ public class ImgurLoginGui extends GuiScreen {
 		nameValuePairs.add(new BasicNameValuePair("pin", pinCode.getText()));
 		post.setEntity(new UrlEncodedFormEntity(nameValuePairs));
 		DefaultHttpClient client = new DefaultHttpClient();
-        HttpResponse resp = client.execute(post);
-        String result = EntityUtils.toString(resp.getEntity());
-        
-        JsonParser parser = new JsonParser();
-        JsonObject json = parser.parse(result).getAsJsonObject();
+		HttpResponse resp = client.execute(post);
+		String result = EntityUtils.toString(resp.getEntity());
 
-    	if (json.has("success") && !json.get("success").getAsBoolean()) {
-    		bUpload.sendChatMessage(json.get("data").getAsJsonObject().get("error").getAsString());
-    		return;
-    	}
-    	
-    	String refresh = json.get("refresh_token").getAsString();
-    	ImgurProfile.setTokens(refresh);
+		JsonParser parser = new JsonParser();
+		JsonObject json = parser.parse(result).getAsJsonObject();
+
+		if (json.has("success") && !json.get("success").getAsBoolean()) {
+			bUpload.sendChatMessage(json.get("data").getAsJsonObject().get("error").getAsString());
+			return;
+		}
+
+		String refresh = json.get("refresh_token").getAsString();
+		ImgurProfile.setTokens(refresh);
 	}
 
 	@Override
 	public void confirmClicked(boolean accepted, int par2) {
 		if (accepted) {
-			 try
-             {
-             	Desktop dt = Desktop.getDesktop();
-             	dt.browse(URI.create(URL));
-             	linkGiven = true;
-             }
-             catch (Throwable var4)
-             {
-                 var4.printStackTrace();
-             }
-			 
+			openLink();
 			mc.displayGuiScreen(this);
 		} else {
 			mc.displayGuiScreen(null);
+		}
+	}
+
+	private void openLink() {
+		try {
+			Desktop dt = Desktop.getDesktop();
+			dt.browse(URI.create(URL));
+			linkGiven = true;
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -115,15 +119,19 @@ public class ImgurLoginGui extends GuiScreen {
 	@SuppressWarnings("unchecked")
 	public void initGui() {
 		if (!linkGiven) {
-			Minecraft.getMinecraft().displayGuiScreen(new GuiConfirmOpenLink(this, URL, 0, false));
+			if (mc.gameSettings.chatLinksPrompt) {
+				mc.displayGuiScreen(new GuiConfirmOpenLink(this, URL, 0, false));
+			} else {
+				openLink();
+			}
 		}
-		
+
 		int buttonWidth = 100;
 		int buttonHeight = 20;
-		
-		buttonList.add(new GuiButton(ACCEPT, this.width / 2 - buttonWidth - 8,  this.height / 6 + 96, buttonWidth, buttonHeight, "Accept"));
-		buttonList.add(new GuiButton(CANCEL, this.width / 2 + 8,  this.height / 6 + 96, buttonWidth, buttonHeight, "Cancel"));
-		
+
+		buttonList.add(new GuiButton(ACCEPT, this.width / 2 - buttonWidth - 8, this.height / 6 + 96, buttonWidth, buttonHeight, "Accept"));
+		buttonList.add(new GuiButton(CANCEL, this.width / 2 + 8, this.height / 6 + 96, buttonWidth, buttonHeight, "Cancel"));
+
 		pinCode = new GuiTextField(mc.fontRenderer, this.width / 2 - buttonWidth - 8, this.height / 6 + 64, buttonWidth * 2 + 16, buttonHeight);
 	}
 
