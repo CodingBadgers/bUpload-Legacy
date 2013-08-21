@@ -29,7 +29,7 @@ This is an git repository, so you must use git softwere, either a git cli client
 h2. Building
 
 bUpload is built with ant, so make sure that you have ant installed and on your path before you try and build.
-To setup the environment to build run @ant setup@ and then to build a version of bUpload run @ant main@, this will build a version dependent version, and a version independent in the bin folder in the root directory. The version dependent version will not have a minecraft version after the name eg. bUpload-1.0.0.zip is independant bUpload-1.0.0-1.5.2.zip is dependant.
+To setup the environment to build run @ant setup@ and then to build a version of bUpload run @ant main@, this will build a jar in the @bin@ directory, this can be installed just as any other mod in the mods directory of your minecraft install.
 
 h2. Links
 
