@@ -19,10 +19,12 @@ package uk.codingbadgers.bUpload;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 
 import org.apache.commons.codec.binary.Base64;
@@ -57,17 +59,28 @@ public class ImageUploadThread implements Runnable {
 	 */
 	private boolean upload(Screenshot image) {
 		try {
+			String title = bUpload.DATE_FORMAT.format(new Date());
+			String description = "A minecraft screenshot ";
+			
+			if (Minecraft.getMinecraft().isSingleplayer()) {
+				description += "in " + Minecraft.getMinecraft().getIntegratedServer().getFolderName();
+			} else {
+				description += "on " + bUpload.server + (bUpload.port != 25565 ? ":" + bUpload.port : "");
+			}
+			
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
 			ImageIO.write(image.image, "png", baos);
 			String data = Base64.encodeBase64String(baos.toByteArray());
 
-			List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>(3);
-			nameValuePairs.add(new BasicNameValuePair("client_id", ImgurProfile.CLIENT_ID));
-			nameValuePairs.add(new BasicNameValuePair("image", data));
-			nameValuePairs.add(new BasicNameValuePair("type", "base64"));
+			List<NameValuePair> arguments = new ArrayList<NameValuePair>(3);
+			arguments.add(new BasicNameValuePair("client_id", ImgurProfile.CLIENT_ID));
+			arguments.add(new BasicNameValuePair("image", data));
+			arguments.add(new BasicNameValuePair("type", "base64"));
+			arguments.add(new BasicNameValuePair("title", title));
+			arguments.add(new BasicNameValuePair("description", description));
 
 			HttpPost hpost = new HttpPost("https://api.imgur.com/3/upload");
-			hpost.setEntity(new UrlEncodedFormEntity(nameValuePairs));
+			hpost.setEntity(new UrlEncodedFormEntity(arguments));
 
 			if (ImgurProfile.getAccessToken() != null) {
 				hpost.addHeader("Authorization", "Bearer " + ImgurProfile.getAccessToken());
@@ -84,9 +97,8 @@ public class ImageUploadThread implements Runnable {
 
 			if (responce.has("success") && responce.get("success").getAsBoolean()) {
 				final String uploadUrl = responceData.get("link").getAsString();
-				final String imageName = responceData.get("datetime").getAsString();
 
-				bUpload.addUploadedImage(new UploadedImage(imageName, uploadUrl, image, false));
+				bUpload.addUploadedImage(new UploadedImage(title, uploadUrl, image, false));
 				bUpload.sendChatMessage("image.upload.success", true, uploadUrl);
 
 				if (bUpload.SHOULD_COPY_TO_CLIPBOARD) {

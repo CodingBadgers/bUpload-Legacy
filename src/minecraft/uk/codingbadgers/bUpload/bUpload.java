@@ -62,22 +62,22 @@ public class bUpload {
 	@Instance("@MOD_ID@")
 	public static bUpload INSTANCE = null;
 
-	public static final char COLOUR = 167;
-	private static IntBuffer PIXEL_BUFFER = null;
-	private static int[] PIXEL_ARRAY = null;
-	private static ArrayList<UploadedImage> m_uploadHistory = new ArrayList<UploadedImage>();
-	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
-	
+	public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
+
 	public static Configuration CONFIG = null;
 	public static boolean SHOULD_REMEMBER_CHOICE = false;
 	public static boolean SHOULD_COPY_TO_CLIPBOARD = true;
     public static int CHOICE_TO_REMEMBER = 0;
 	public static String ADV_SS_KEYBINDING = null;
 	public static String SS_HISTORY_KEYBINDING = null;
-	
+
 	public static String server;
 	public static int port;
 
+	private static int[] PIXEL_ARRAY = null;
+	private static IntBuffer PIXEL_BUFFER = null;
+	private static ArrayList<UploadedImage> m_uploadHistory = new ArrayList<UploadedImage>();
+	
 	/**
 	 * Pre init.
 	 *
