@@ -17,65 +17,63 @@
  */
 package uk.codingbadgers.bUpload;
 
-public class UploadedImage
-{
-    private final String m_name;
-    private final String m_url;
-    private int m_imageID;
-    private boolean m_localFile;
+/**
+ * Represents a saved image.
+ */
+public class UploadedImage {
+	private final String m_name;
+	private final String m_url;
+	private final int m_imageID;
+	private final boolean m_localFile;
 
-    /**
-     *
-     * @param name
-     * @param url
-     * @param image
-     */
-    public UploadedImage(
-            String name,
-            String url,
-            Screenshot image,
-            boolean localFile
-    )
-    {
-        m_name = name;
-        m_url = url;
-        m_imageID = image.imageID;
-        m_localFile = localFile;
-    }
+	/**
+	 * Instantiates a new uploaded image.
+	 *
+	 * @param name the name
+	 * @param url the url of the image
+	 * @param image the image
+	 * @param localFile the local file
+	 */
+	public UploadedImage(String name, String url, Screenshot image, boolean localFile) {
+		m_name = name;
+		m_url = url;
+		m_imageID = image.imageID;
+		m_localFile = localFile;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public String getName()
-    {
-        return m_name;
-    }
+	/**
+	 * Gets the name.
+	 *
+	 * @return the name
+	 */
+	public String getName() {
+		return m_name;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public String getUrl()
-    {
-        return m_url;
-    }
+	/**
+	 * Gets the url.
+	 *
+	 * @return the url
+	 */
+	public String getUrl() {
+		return m_url;
+	}
 
-    /**
-     *
-     * @return
-     */
-    public int getImageID()
-    {
-        return m_imageID;
-    }
-    
-    /**
-    *
-    * @return
-    */
-   public boolean isLocal()
-   {
-       return m_localFile;
-   }
+	/**
+	 * Gets the image id.
+	 *
+	 * @return the image id
+	 */
+	public int getImageID() {
+		return m_imageID;
+	}
+	
+	/**
+	 * Checks if is local.
+	 *
+	 * @return true, if is local
+	 */
+	public boolean isLocal() {
+		return m_localFile;
+	}
 }

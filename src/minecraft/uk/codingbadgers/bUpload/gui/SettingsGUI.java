@@ -49,7 +49,6 @@ public class SettingsGUI extends bUploadGuiScreen {
 
 	public SettingsGUI(bUpload mod) {
 		m_mod = mod;
-		m_mod.createScreenshot();
 
 		bUpload.CONFIG.load();
 		bUpload.CONFIG.save();
@@ -70,11 +69,6 @@ public class SettingsGUI extends bUploadGuiScreen {
 
 	@SuppressWarnings("unchecked")
 	public void initGui() {
-		if (bUpload.SHOULD_REMEMBER_CHOICE) {
-			performScreenshotAction(bUpload.CHOICE_TO_REMEMBER);
-			return;
-		}
-
 		buttonList.clear();
 		int ypos = (height / 5);
 		int buttonwidth = 160;

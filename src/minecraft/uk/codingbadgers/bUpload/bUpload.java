@@ -67,7 +67,6 @@ public class bUpload {
 	private static int[] PIXEL_ARRAY = null;
 	private static ArrayList<UploadedImage> m_uploadHistory = new ArrayList<UploadedImage>();
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd_HH.mm.ss");
-	private Screenshot m_lastScreenshot = new Screenshot();
 	
 	public static Configuration CONFIG = null;
 	public static boolean SHOULD_REMEMBER_CHOICE = false;
@@ -152,9 +151,11 @@ public class bUpload {
 
 	/**
 	 * Creates the screenshot.
+	 * @return 
 	 */
-	public void createScreenshot() {
+	public Screenshot createScreenshot() {
 		Minecraft minecraft = ModLoader.getMinecraftInstance();
+		Screenshot shot = new Screenshot();
 
 		try {
 			int screenSize = minecraft.displayWidth * minecraft.displayHeight;
@@ -170,34 +171,38 @@ public class bUpload {
 			GL11.glReadPixels(0, 0, minecraft.displayWidth, minecraft.displayHeight, GL12.GL_BGRA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, PIXEL_BUFFER);
 			PIXEL_BUFFER.get(PIXEL_ARRAY);
 			copyScreenBuffer(PIXEL_ARRAY, minecraft.displayWidth, minecraft.displayHeight);
-			m_lastScreenshot.image = new BufferedImage(minecraft.displayWidth, minecraft.displayHeight, 1);
-			m_lastScreenshot.image.setRGB(0, 0, minecraft.displayWidth, minecraft.displayHeight, PIXEL_ARRAY, 0, minecraft.displayWidth);
-			m_lastScreenshot.imageID = TextureUtil.func_110987_a(TextureUtil.func_110996_a(), m_lastScreenshot.image);
+			shot.image = new BufferedImage(minecraft.displayWidth, minecraft.displayHeight, 1);
+			shot.image.setRGB(0, 0, minecraft.displayWidth, minecraft.displayHeight, PIXEL_ARRAY, 0, minecraft.displayWidth);
+			shot.imageID = TextureUtil.func_110987_a(TextureUtil.func_110996_a(), shot.image);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			m_lastScreenshot.image = null;
-			m_lastScreenshot.imageID = 0;
+			shot.image = null;
+			shot.imageID = 0;
 		}
+		
+		return shot;
 	}
 
 	/**
 	 * Upload screen shot.
+	 * @param screenshot the screenshot to upload
 	 */
-	public void uploadScreenShot() {
-		if (m_lastScreenshot.image != null && m_lastScreenshot.imageID != 0) {
+	public void uploadScreenShot(Screenshot screenshot) {
+		if (screenshot.image != null && screenshot.imageID != 0) {
 			bUpload.sendChatMessage("Uploading image to Imgur...");
-			ImageUploadThread uploadThread = new ImageUploadThread(m_lastScreenshot);
+			ImageUploadThread uploadThread = new ImageUploadThread(screenshot);
 			new Thread(uploadThread).start();
 		}
 	}
 
 	/**
 	 * Save screenshot to hd.
+	 * @param screenshot the screenshot to save
 	 */
-	public void saveScreenshotToHD() {
+	public void saveScreenshotToHD(Screenshot screenshot) {
 		Minecraft minecraft = Minecraft.getMinecraft();
 
-		if (m_lastScreenshot != null) {
+		if (screenshot != null && screenshot.imageID != 0) {
 			String imagePath = minecraft.mcDataDir.getAbsolutePath();
 
 			// for some reason player is null in the menu
@@ -225,7 +230,7 @@ public class bUpload {
 				}
 
 				try {
-					ImageIO.write(m_lastScreenshot.image, "PNG", outputFile);
+					ImageIO.write(screenshot.image, "PNG", outputFile);
 				} catch (IOException e) {
 					bUpload.sendChatMessage("Failed to save image to disk!");
 					e.printStackTrace();
@@ -233,18 +238,11 @@ public class bUpload {
 				}
 
 				bUpload.sendChatMessage("Image saved to disk!");
-				bUpload.addUploadedImage(new UploadedImage(imagePath.substring(imagePath.lastIndexOf("\\") + 1), imagePath, m_lastScreenshot, true));
+				bUpload.addUploadedImage(new UploadedImage(imagePath.substring(imagePath.lastIndexOf("\\") + 1), imagePath, screenshot, true));
 			}
 		}
 	}
 	
-	/**
-	 * Copy the screen buffer.
-	 *
-	 * @param buffer to copy too
-	 * @param width of the buffer
-	 * @param height of the buffer
-	 */
 	private static void copyScreenBuffer(int[] buffer, int width, int height) {
 		int[] var3 = new int[width];
 		int halfHeight = height / 2;
@@ -261,9 +259,10 @@ public class bUpload {
 	 *
 	 * @param newImage the new image
 	 */
-
-	public static synchronized void addUploadedImage(UploadedImage newImage) {
-		m_uploadHistory.add(newImage);
+	public static void addUploadedImage(UploadedImage newImage) {
+		synchronized (m_uploadHistory) {
+			m_uploadHistory.add(newImage);
+		}
 	}
 
 	/**
@@ -297,7 +296,7 @@ public class bUpload {
 		sendChatMessage(message, false);
 	}
 	
-	public static void sendChatMessage(String key, boolean translate) {		
+	public static void sendChatMessage(String key, boolean translate) {
 		String message = key;
 		
 		if (translate) {
@@ -312,7 +311,7 @@ public class bUpload {
 		Minecraft.getMinecraft().ingameGUI.getChatGUI().printChatMessage(EnumChatFormatting.GOLD + "[bUpload]" + EnumChatFormatting.RESET + " " + message);
 	}
 	
-	public static void sendChatMessage(String key, boolean translate, Object... object) {		
+	public static void sendChatMessage(String key, boolean translate, Object... object) {
 		String message = key;
 		
 		if (translate) {

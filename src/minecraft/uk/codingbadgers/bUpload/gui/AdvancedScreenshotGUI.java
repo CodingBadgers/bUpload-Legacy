@@ -19,6 +19,7 @@ package uk.codingbadgers.bUpload.gui;
 
 import uk.codingbadgers.Gui.GuiCheckBox;
 import uk.codingbadgers.bUpload.ImgurProfile;
+import uk.codingbadgers.bUpload.Screenshot;
 import uk.codingbadgers.bUpload.bUpload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -41,14 +42,14 @@ public class AdvancedScreenshotGUI extends bUploadGuiScreen
 	private GuiCheckBox m_copyToClipboard = null;
 
     private bUpload m_mod = null;
+    private Screenshot m_image = null;
 
     public AdvancedScreenshotGUI(bUpload mod)
     {
         m_mod = mod;
-        m_mod.createScreenshot();
+        m_image = m_mod.createScreenshot();
         
         bUpload.CONFIG.load();
-       
         bUpload.CONFIG.save(); 
     }
 
@@ -113,7 +114,7 @@ public class AdvancedScreenshotGUI extends bUploadGuiScreen
             {
             	bUpload.CHOICE_TO_REMEMBER = SAVE_TO_HD;
                 updatedSettings();
-                m_mod.saveScreenshotToHD();
+                m_mod.saveScreenshotToHD(m_image);
                 mc.displayGuiScreen(null);
                 break;
             }
@@ -122,7 +123,7 @@ public class AdvancedScreenshotGUI extends bUploadGuiScreen
             {
             	bUpload.CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
                 updatedSettings();
-                m_mod.uploadScreenShot();
+                m_mod.uploadScreenShot(m_image);
                 mc.displayGuiScreen(null);
                 break;
             }
@@ -131,8 +132,8 @@ public class AdvancedScreenshotGUI extends bUploadGuiScreen
             {
             	bUpload.CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
                 updatedSettings();
-                m_mod.uploadScreenShot();
-                m_mod.saveScreenshotToHD();
+                m_mod.uploadScreenShot(m_image);
+                m_mod.saveScreenshotToHD(m_image);
                 mc.displayGuiScreen(null);
                 break;
             }

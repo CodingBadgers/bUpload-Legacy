@@ -19,6 +19,8 @@
 	<property name="forge.dir" value="${build.dir}/forge"/>
 	<property name="mcp.dir" value="${forge.dir}/mcp"/>
 	<property name="mcpsrc.dir" value="${mcp.dir}/src"/>
+	<property name="mcpbin.dir" value="${mcp.dir}/bin/minecraft"/>
+	
 
 	<!-- Versioning -->
 	<property name="mc.version" value="1.6.2"/>
@@ -95,7 +97,7 @@
 			<filterset refid="filter" />
 		</copy>
 
-		<copy todir="${mcpsrc.dir}/minecraft/assets">
+		<copy todir="${mcpbin.dir}/assets/">
 			<fileset dir="${classes.dir}/assets"/>
 		</copy>
 	</target>
