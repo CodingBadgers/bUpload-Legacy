@@ -113,10 +113,18 @@ public class SettingsGUI extends bUploadGuiScreen {
 
 		buttonList.add(m_login);
 		buttonList.add(m_logout);
+		
+		updateButtonState();
 	}
 
 	public void actionPerformed(GuiButton button) {
 		performScreenshotAction(button.id);
+	}
+	
+	private void updateButtonState() {
+		m_saveToHDD.enabled = bUpload.CHOICE_TO_REMEMBER != SAVE_TO_HD;
+		m_saveToImgur.enabled = bUpload.CHOICE_TO_REMEMBER != SAVE_TO_IMGUR;
+		m_saveToBoth.enabled = bUpload.CHOICE_TO_REMEMBER != SAVE_TO_BOTH;
 	}
 
 	private void performScreenshotAction(int id) {
@@ -126,27 +134,21 @@ public class SettingsGUI extends bUploadGuiScreen {
 		case SAVE_TO_HD: {
 			bUpload.CHOICE_TO_REMEMBER = SAVE_TO_HD;
 			updatedSettings();
-			m_saveToHDD.enabled = false;
-			m_saveToImgur.enabled = true;
-			m_saveToBoth.enabled = true;
+			updateButtonState();
 			break;
 		}
 
 		case SAVE_TO_IMGUR: {
 			bUpload.CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
 			updatedSettings();
-			m_saveToHDD.enabled = true;
-			m_saveToImgur.enabled = false;
-			m_saveToBoth.enabled = true;
+			updateButtonState();
 			break;
 		}
 
 		case SAVE_TO_BOTH: {
 			bUpload.CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
 			updatedSettings();
-			m_saveToHDD.enabled = true;
-			m_saveToImgur.enabled = true;
-			m_saveToBoth.enabled = false;
+			updateButtonState();
 			break;
 		}
 
