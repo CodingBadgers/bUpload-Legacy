@@ -1,6 +1,14 @@
-1.0.0 - First update with new version independent build system
-1.0.1 - Added option to copy url directly to clipboard
-1.0.2 - Implemented resource filtering for mod name/version/authors
-1.1.0 - Update to 1.6
-1.1.1 - Potentially fix issue with OSX saving screen shots to incorrect folder (fixes windows as well), Fixes server name not being read correctly as well
-1.1.2 - Fixed keybindings not saving across sessions and fixed a Crash if taking a screenshot in the main menu
+1.0.0 	- First update with new version independent build system
+1.0.1 	- Added option to copy url directly to clipboard
+1.0.2 	- Implemented resource filtering for mod name/version/authors
+
+1.1.0 	- Update to 1.6
+1.1.1 	- Potentially fix issue with OSX saving screen shots to incorrect folder (fixes windows as well)
+		- Fixes server name not being read correctly as well
+1.1.2 	- Fixed keybindings not saving across sessions and fixed a Crash if taking a screenshot in the main menu
+
+1.2.0 	- Added support for imgur v3 api
+		- Added support for uploading to imgur account
+		- Added settings gui
+		- Migrated to use language files
+		- Fixed numerous bugs
