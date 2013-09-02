@@ -119,6 +119,7 @@
 		<!-- Create english language files -->
 		<copy file="${classes.dir}/assets/bupload/lang/en_GB.lang" tofile="${classes.dir}/assets/bupload/lang/en_US.lang" />
 		<copy file="${classes.dir}/assets/bupload/lang/en_GB.lang" tofile="${classes.dir}/assets/bupload/lang/en_PT.lang" />
+		<copy file="${classes.dir}/assets/bupload/lang/fr_FR.lang" tofile="${classes.dir}/assets/bupload/lang/fr_CA.lang" />
 
 		<!-- Copy resources -->
 		<copy todir="${classes.dir}">
