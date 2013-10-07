@@ -4,6 +4,12 @@ import net.minecraft.client.gui.GuiScreen;
 
 public class bUploadGuiScreen extends GuiScreen {
 
-	public void updateLogin() {}
+	protected bUploadGuiScreen parent;
+
+    public bUploadGuiScreen(bUploadGuiScreen screen) {
+        this.parent = screen;
+    }
+
+    public void updateLogin() {}
 	
 }

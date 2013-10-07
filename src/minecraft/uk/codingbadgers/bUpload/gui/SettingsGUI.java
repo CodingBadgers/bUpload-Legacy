@@ -18,154 +18,108 @@
 package uk.codingbadgers.bUpload.gui;
 
 import uk.codingbadgers.Gui.GuiCheckBox;
-import uk.codingbadgers.bUpload.ImgurProfile;
-import uk.codingbadgers.bUpload.bUpload;
+import uk.codingbadgers.bUpload.handlers.ConfigHandler;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.src.ModLoader;
-import net.minecraftforge.common.Configuration;
 
 public class SettingsGUI extends bUploadGuiScreen {
+    
 	private static final int SAVE_TO_HD = 1;
 	private static final int SAVE_TO_IMGUR = 2;
-	private static final int SAVE_TO_BOTH = 3;
-	private static final int REMEMBER_CHOICE = 4;
-	private static final int COPY_TO_CLIPBOARD = 5;
-	private static final int HISTORY = 6;
-	private static final int EXIT = 7;
-	private static final int LOGIN = 8;
-	private static final int LOGOUT = 9;
+	private static final int SAVE_TO_FTP = 3;
+	private static final int COPY_TO_CLIPBOARD = 4;
+	private static final int HISTORY = 5;
+	private static final int EXIT = 6;
+	private static final int AUTH = 7;
 
-	private GuiCheckBox m_rememberCheckBox = null;
 	private GuiCheckBox m_copyToClipboard = null;
-	private GuiButton m_saveToHDD;
-	private GuiButton m_saveToImgur;
-	private GuiButton m_saveToBoth;
-	private GuiButton m_login;
-	private GuiButton m_logout;
+	private GuiCheckBox m_saveToHDD;
+	private GuiCheckBox m_saveToImgur;
+	private GuiCheckBox m_saveToFtp;
+	private GuiButton m_auth;
 
-	private bUpload m_mod = null;
-
-	public SettingsGUI(bUpload mod) {
-		m_mod = mod;
-
-		bUpload.CONFIG.load();
-		bUpload.CONFIG.save();
+	public SettingsGUI(bUploadGuiScreen screen) {
+	    super(screen);
 	}
 
 	@Override
-	public void updateLogin() {
-		if (ImgurProfile.isLoggedIn()) {
-			m_login.displayString = I18n.func_135052_a("image.options.loggedIn", ImgurProfile.getUsername());
-			m_login.enabled = false;
-			m_logout.drawButton = true;
-		} else {
-			m_login.displayString = I18n.func_135052_a("image.options.login");
-			m_login.enabled = true;
-			m_logout.drawButton = false;
-		}
-	}
+	public void updateLogin() {}
 
 	@SuppressWarnings("unchecked")
 	public void initGui() {
 		buttonList.clear();
 		int ypos = (height / 5);
-		int buttonwidth = 160;
+		int buttonwidth = 100;
 
-		m_saveToHDD = new GuiButton(SAVE_TO_HD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.hdd"));
-		buttonList.add(m_saveToHDD);
-		ypos += 24;
-
-		m_saveToImgur = new GuiButton(SAVE_TO_IMGUR, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.imgur"));
-		buttonList.add(m_saveToImgur);
-		ypos += 24;
-
-		m_saveToBoth = new GuiButton(SAVE_TO_BOTH, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.both"));
-		buttonList.add(m_saveToBoth);
-		ypos += 24;
-
-		m_rememberCheckBox = new GuiCheckBox(REMEMBER_CHOICE, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.remember"));
-		m_rememberCheckBox.setChecked(bUpload.SHOULD_REMEMBER_CHOICE);
-		buttonList.add(m_rememberCheckBox);
-		ypos += 24;
-
-		m_copyToClipboard = new GuiCheckBox(COPY_TO_CLIPBOARD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.func_135052_a("image.options.copy"));
-		m_copyToClipboard.setChecked(bUpload.SHOULD_COPY_TO_CLIPBOARD);
+		m_saveToImgur = new GuiCheckBox(SAVE_TO_IMGUR, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20,  I18n.getString("image.save.imgur"));
+		m_saveToImgur.setChecked(ConfigHandler.SAVE_IMGUR);
+        buttonList.add(m_saveToImgur);
+        ypos += 24;
+        
+        m_saveToFtp = new GuiCheckBox(SAVE_TO_FTP, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20,  I18n.getString("image.save.ftp"));
+        m_saveToFtp.setChecked(ConfigHandler.SAVE_FTP);
+        buttonList.add(m_saveToFtp);
+        ypos += 24;
+        
+        m_saveToHDD = new GuiCheckBox(SAVE_TO_HD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20,  I18n.getString("image.save.hd"));
+        m_saveToHDD.setChecked(ConfigHandler.SAVE_FILE);
+        buttonList.add(m_saveToHDD);
+        ypos += 24;
+        ypos += 24;
+        buttonwidth = 160;
+        
+		m_copyToClipboard = new GuiCheckBox(COPY_TO_CLIPBOARD, width / 2 - (buttonwidth / 2), ypos, buttonwidth, 20, I18n.getString("image.options.copy"));
+		m_copyToClipboard.setChecked(ConfigHandler.COPY_URL_TO_CLIPBOARD);
 		buttonList.add(m_copyToClipboard);
 		ypos += 24;
-		buttonwidth = 75;
 
-		buttonList.add(new GuiButton(HISTORY, width / 2 - 80, ypos, buttonwidth, 20, I18n.func_135052_a("image.options.history")));
-		buttonList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, I18n.func_135052_a("image.options.cancel")));
+		m_auth = new GuiButton(AUTH, width / 2 - (buttonwidth / 2), ypos, 160, 20, I18n.getString("image.options.auth"));
+		buttonList.add(m_auth);
 		ypos += 24;
-		buttonwidth = 160;
-
-		m_login = new GuiButton(LOGIN, width / 2 - (buttonwidth / 2), ypos, 160, 20, I18n.func_135052_a("image.options.login"));
-		m_logout = new GuiButton(LOGOUT, width / 2 + (buttonwidth / 2) + 10, ypos, 60, 20, I18n.func_135053_a("image.options.logout"));
-		m_logout.drawButton = false;
-
-		if (ImgurProfile.isLoggedIn()) {
-			m_login.displayString = I18n.func_135052_a("image.options.loggedIn", ImgurProfile.getUsername());
-			m_login.enabled = false;
-			m_logout.drawButton = true;
-		}
-
-		buttonList.add(m_login);
-		buttonList.add(m_logout);
+		buttonwidth = 75;
 		
-		updateButtonState();
+		buttonList.add(new GuiButton(HISTORY, width / 2 - 80, ypos, buttonwidth, 20, I18n.getString("image.options.history")));
+		buttonList.add(new GuiButton(EXIT, width / 2 + 5, ypos, buttonwidth, 20, I18n.getString("image.options.cancel")));
+		ypos += 24;
 	}
 
 	public void actionPerformed(GuiButton button) {
 		performScreenshotAction(button.id);
 	}
 	
-	private void updateButtonState() {
-		m_saveToHDD.enabled = bUpload.CHOICE_TO_REMEMBER != SAVE_TO_HD;
-		m_saveToImgur.enabled = bUpload.CHOICE_TO_REMEMBER != SAVE_TO_IMGUR;
-		m_saveToBoth.enabled = bUpload.CHOICE_TO_REMEMBER != SAVE_TO_BOTH;
-	}
-
 	private void performScreenshotAction(int id) {
 		Minecraft mc = ModLoader.getMinecraftInstance();
 
 		switch (id) {
 		case SAVE_TO_HD: {
-			bUpload.CHOICE_TO_REMEMBER = SAVE_TO_HD;
+			ConfigHandler.SAVE_FILE = m_saveToHDD.getChecked();
 			updatedSettings();
-			updateButtonState();
 			break;
 		}
 
 		case SAVE_TO_IMGUR: {
-			bUpload.CHOICE_TO_REMEMBER = SAVE_TO_IMGUR;
+            ConfigHandler.SAVE_IMGUR = m_saveToImgur.getChecked();
 			updatedSettings();
-			updateButtonState();
 			break;
 		}
 
-		case SAVE_TO_BOTH: {
-			bUpload.CHOICE_TO_REMEMBER = SAVE_TO_BOTH;
-			updatedSettings();
-			updateButtonState();
-			break;
-		}
-
-		case REMEMBER_CHOICE: {
-			bUpload.SHOULD_REMEMBER_CHOICE = m_rememberCheckBox.getChecked();
+		case SAVE_TO_FTP: {
+            ConfigHandler.SAVE_FTP = m_saveToFtp.getChecked();
 			updatedSettings();
 			break;
 		}
 
 		case COPY_TO_CLIPBOARD: {
-			bUpload.SHOULD_COPY_TO_CLIPBOARD = m_copyToClipboard.getChecked();
+			ConfigHandler.COPY_URL_TO_CLIPBOARD = m_copyToClipboard.getChecked();
 			updatedSettings();
 			break;
 		}
 
 		case HISTORY: {
-			mc.displayGuiScreen(new UploadHistoryGUI(m_mod));
+			mc.displayGuiScreen(new UploadHistoryGUI(this));
 			break;
 		}
 
@@ -174,14 +128,8 @@ public class SettingsGUI extends bUploadGuiScreen {
 			break;
 		}
 
-		case LOGIN: {
-			mc.displayGuiScreen(new ImgurLoginGui(this));
-			break;
-		}
-
-		case LOGOUT: {
-			ImgurProfile.forgetProfile();
-			updateLogin();
+		case AUTH: {
+			mc.displayGuiScreen(new AuthGui(this));
 			break;
 		}
 
@@ -192,18 +140,12 @@ public class SettingsGUI extends bUploadGuiScreen {
 	}
 
 	private void updatedSettings() {
-		bUpload.CONFIG.load();
-
-		bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "RememberSaveChoice", bUpload.SHOULD_REMEMBER_CHOICE).set(bUpload.SHOULD_REMEMBER_CHOICE);
-		bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "ChoiceToRemember", bUpload.CHOICE_TO_REMEMBER).set(bUpload.CHOICE_TO_REMEMBER);
-		bUpload.CONFIG.get(Configuration.CATEGORY_GENERAL, "CopyToClipboard", bUpload.SHOULD_COPY_TO_CLIPBOARD).set(bUpload.SHOULD_COPY_TO_CLIPBOARD);
-
-		bUpload.CONFIG.save();
+	    ConfigHandler.save();
 	}
 
 	public void drawScreen(int i, int j, float f) {
 		drawDefaultBackground();
-		drawCenteredString(fontRenderer, I18n.func_135052_a("image.settings.title"), width / 2, height / 5 - 20, 0xffffff);
+		drawCenteredString(fontRenderer, I18n.getString("image.settings.title"), width / 2, height / 5 - 20, 0xffffff);
 		super.drawScreen(i, j, f);
 	}
 }

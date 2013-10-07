@@ -1,4 +1,4 @@
-1.0.0 	- First update with new version independent build system
+1.0.0 	- First update with new build system
 1.0.1 	- Added option to copy url directly to clipboard
 1.0.2 	- Implemented resource filtering for mod name/version/authors
 
@@ -12,3 +12,10 @@
 		- Added settings gui
 		- Migrated to use language files
 		- Fixed numerous bugs
+
+1.3.0   - Adds support for ftp uploading and more configuration options.
+		- Adds threading to all upload types.
+		- Adds new auth system, with generalized gui and encrypted database file.
+		- Adds support for new ChatMessageComponent chat system internally (1.7 possible features).
+		- Rewrite of upload system and config system.
+		- Removes ability to launch on server's.

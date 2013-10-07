@@ -25,7 +25,8 @@ import java.net.URI;
 import org.lwjgl.opengl.GL11;
 
 import uk.codingbadgers.bUpload.UploadedImage;
-import uk.codingbadgers.bUpload.bUpload;
+import uk.codingbadgers.bUpload.handlers.HistoryHandler;
+import uk.codingbadgers.bUpload.handlers.MessageHandler;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -36,8 +37,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class UploadHistoryGUI extends bUploadGuiScreen {
 	
-	private bUpload m_mod = null;
-
 	private static final int COTAINER_WIDTH = 176;
 	private static final int CONTAINER_HIGHT = 222;
 	
@@ -50,12 +49,9 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 
 	/**
 	 * Default constructor
-	 * 
-	 * @param mod
-	 *            Access to our main mod instance
 	 */
-	public UploadHistoryGUI(bUpload mod) {
-		m_mod = mod;
+	public UploadHistoryGUI(bUploadGuiScreen screen) {
+	    super(screen);
 	}
 
 	/**
@@ -67,7 +63,7 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 		buttonList.add(new GuiButton(BUTTON_PREVIOUS, (width / 2) - (COTAINER_WIDTH / 2) - (70), ((height / 2) - (CONTAINER_HIGHT / 2) + CONTAINER_HIGHT) - 25, 60, 20, "Previous"));
 		buttonList.add(new GuiButton(BUTTON_NEXT, (width / 2) + (COTAINER_WIDTH / 2) + (10), ((height / 2) - (CONTAINER_HIGHT / 2) + CONTAINER_HIGHT) - 25, 60, 20, "Next"));
 
-		m_settingsButton = new GuiButton(BUTTON_SETTINGS, (width / 2) + (COTAINER_WIDTH / 2) + (10), (this.height / 2) - (CONTAINER_HIGHT / 2) + 5, 60, 20, I18n.func_135053_a("image.history.settings"));
+		m_settingsButton = new GuiButton(BUTTON_SETTINGS, (width / 2) + (COTAINER_WIDTH / 2) + (10), (this.height / 2) - (CONTAINER_HIGHT / 2) + 5, 60, 20, I18n.getString("image.history.settings"));
 		buttonList.add(m_settingsButton);
 	}
 
@@ -82,10 +78,10 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 		Minecraft minecraft = Minecraft.getMinecraft();
 		drawDefaultBackground();
 		// load our container image
-		minecraft.renderEngine.func_110577_a(new ResourceLocation("bUpload:textures/gui/bupload-history.png"));
+		minecraft.renderEngine.bindTexture(new ResourceLocation("bUpload:textures/gui/bupload-history.png"));
 		GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 		drawTexturedModalRect((width / 2) - (COTAINER_WIDTH / 2), (height / 2) - (CONTAINER_HIGHT / 2), 0, 0, COTAINER_WIDTH, CONTAINER_HIGHT);
-		UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+		UploadedImage imageInfo = HistoryHandler.getUploadedImage(m_currentImage);
 
 		if (imageInfo != null) {
 			// draw the image information
@@ -96,7 +92,7 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 			if (!imageInfo.isLocal()) {
 				drawCenteredString(minecraft.fontRenderer, imageInfo.getUrl(), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + yOffset, 0xFFFFAA00);
 			} else {
-				drawCenteredString(minecraft.fontRenderer, I18n.func_135053_a("image.history.open"), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + yOffset, 0xFFFFAA00);
+				drawCenteredString(minecraft.fontRenderer, I18n.getString("image.history.open"), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + yOffset, 0xFFFFAA00);
 			}
 
 			// draw the image preview
@@ -104,7 +100,7 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 			GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
 			drawTexturedModalRectSized((width / 2) - (COTAINER_WIDTH / 2) + 8, (height / 2) - (CONTAINER_HIGHT / 2) + 18, 0, 0, 160, 101, 256, 256);
 		} else {
-			drawCenteredString(minecraft.fontRenderer, I18n.func_135053_a("image.history.empty"), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + 132, 0xFFFFFFFF);
+			drawCenteredString(minecraft.fontRenderer, I18n.getString("image.history.empty"), (width / 2), ((height / 2) - (CONTAINER_HIGHT / 2)) + 132, 0xFFFFFFFF);
 		}
 
 		super.drawScreen(i, j, f);
@@ -135,7 +131,7 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 			m_currentImage--;
 
 			if (m_currentImage < 0) {
-				m_currentImage = m_mod.uploadHistorySize() - 1;
+				m_currentImage = HistoryHandler.uploadHistorySize() - 1;
 			}
 
 			if (m_currentImage < 0) {
@@ -147,14 +143,14 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 		case BUTTON_NEXT: {
 			m_currentImage++;
 
-			if (m_currentImage >= m_mod.uploadHistorySize()) {
+			if (m_currentImage >= HistoryHandler.uploadHistorySize()) {
 				m_currentImage = 0;
 			}
 		}
 			break;
 
 		case BUTTON_SETTINGS: {
-			mc.displayGuiScreen(new SettingsGUI(m_mod));
+			mc.displayGuiScreen(new SettingsGUI(this));
 		}
 			break;
 		}
@@ -182,7 +178,7 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 			return;
 		}
 
-		UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+		UploadedImage imageInfo = HistoryHandler.getUploadedImage(m_currentImage);
 
 		if (imageInfo != null) {
 			if (!imageInfo.isLocal()) {
@@ -197,12 +193,12 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 					dt.open(new File(imageInfo.getUrl()));
 				} catch (IOException e) {
 					mc.currentScreen = null;
-					bUpload.sendChatMessage("image.history.open.fail.1", true);
-					bUpload.sendChatMessage("image.history.open.fail.2", true);
+					MessageHandler.sendChatMessage("image.history.open.fail.1");
+					MessageHandler.sendChatMessage("image.history.open.fail.2");
 					try {
 						dt.open(new File(imageInfo.getUrl().replace(imageInfo.getName(), "")));
 					} catch (IOException e1) {
-						bUpload.sendChatMessage("image.history.open.fail.3", true);
+						MessageHandler.sendChatMessage("image.history.open.fail.3");
 					}
 				}
 			}
@@ -221,7 +217,7 @@ public class UploadHistoryGUI extends bUploadGuiScreen {
 	}
 	
 	public void openUrl() {
-		UploadedImage imageInfo = m_mod.getUploadedImage(m_currentImage);
+		UploadedImage imageInfo = HistoryHandler.getUploadedImage(m_currentImage);
 
 		if (imageInfo != null) {
 			try {

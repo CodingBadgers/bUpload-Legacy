@@ -27,6 +27,7 @@ import static org.lwjgl.opengl.GL11.*;
 
 @SideOnly(Side.CLIENT)
 public class GuiCheckBox extends GuiButton {
+    
 	/** The current checked state of the check box */
 	private boolean m_checked = false;
 
@@ -124,12 +125,12 @@ public class GuiCheckBox extends GuiButton {
 		final int hoverColor = enabled == false ? -6250336 : hoverState == 2 ? 16777120 : 14737632;
 		final int labelWidth = minecraft.fontRenderer.getStringWidth(displayString);
 		final int checkboxImageSize = 20;
-		final int xOffset = xPosition + ((width / 2) - ((labelWidth + checkboxImageSize + BOX_LABEL_SPACER) / 2));
+		final int xOffset = xPosition + checkboxImageSize + BOX_LABEL_SPACER + (((width - checkboxImageSize - BOX_LABEL_SPACER) / 2) - ((labelWidth) / 2));
 
-		drawString(minecraft.fontRenderer, displayString, xOffset + checkboxImageSize + BOX_LABEL_SPACER, yPosition + (height - 8) / 2, hoverColor);
-		minecraft.renderEngine.func_110577_a(new ResourceLocation("bUpload:textures/gui/tcb-gui.png"));
+		drawString(minecraft.fontRenderer, displayString, xOffset, yPosition + (height - 8) / 2, hoverColor);
+		minecraft.renderEngine.bindTexture(new ResourceLocation("bUpload:textures/gui/tcb-gui.png"));
 		glColor4f(1.0F, 1.0F, 1.0F, 1.0F);
-		drawTexturedModalRect(xOffset, yPosition, 0, localYoffset, checkboxImageSize, checkboxImageSize);
+		drawTexturedModalRect(xPosition, yPosition, 0, localYoffset, checkboxImageSize, checkboxImageSize);
 	}
 
 	/**
@@ -165,29 +166,13 @@ public class GuiCheckBox extends GuiButton {
 	}
 
 	/**
+	 * Gets whether the mouse is currently over the check box.
+	 *
 	 * @return if the mouse is currently over the check box
+	 * @see {@link GuiButton#func_82252_a()}
 	 */
+	@Override
 	public boolean func_82252_a() {
 		return this.field_82253_i;
-	}
-
-	/**
-	 * Fired when the mouse button is dragged. Equivalent of
-	 * MouseListener.mouseDragged(MouseEvent e).
-	 */
-	protected void mouseDragged(Minecraft par1Minecraft, int par2, int par3) {
-	}
-
-	/**
-	 * Fired when the mouse button is released. Equivalent of
-	 * MouseListener.mouseReleased(MouseEvent e).
-	 */
-	public void mouseReleased(int par1, int par2) {
-	}
-
-	/**
-     *
-     */
-	public void func_82251_b(int par1, int par2) {
 	}
 }
